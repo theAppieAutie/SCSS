@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Bootstrap CSS and JavaScript -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- Axios for AJAX Requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- p5.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script>
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="public/css/style.css" rel="stylesheet">
+    <!-- Meta Character Set -->
+    <meta charset="UTF-8">
+    <!-- Favicon -->
+    <link rel="icon" href="public/assets/favicon.webp" type="image/x-icon">
+    <!-- Page Title -->
+    <title>Security Control Simulation System</title>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="custom-navbar">
+        <!-- Left Side -->
+        <div>
+            <div class="navbar-logo">
+                <a href="/">SCSS</a>
+            </div>
+            <ul class="navbar-text">
+                <li>
+                    <a><span class="glyphicon glyphicon-screenshot"></span> Simulation in Progress!</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Right Side -->
+        <button id="finish-button">Finish</button>
+    </nav>
+
+    <section class="panels">
+        <!-- Left Panel -->
+        <aside id="dronesInfoContainer">
+            <!-- Connection Information Section -->
+            <section class="parameters">
+                <h4>Connection Information:</h4>
+                <div>
+                    <h4 id="info-ip">IP Address: No connection selected</h4>
+                    <h4 id="info-country">Country: No connection selected</h4>
+                    <h4 id="info-checksum">Packet Size: No connection selected</h4>
+                    <h4 id="info-protocol">Protocol: No connection selected</h4>
+                    <h4 id="info-time">Connection Time: No connection selected</h4>
+                    <h4 id="info-certificates">SSL/TLS Certificates: No connection selected</h4>
+                    <h4 id="info-portnumber">Port Number: No connection selected</h4>
+                    <h4 id="info-fragmentation">Fragmentation: No connection selected</h4>
+                    <h4 id="info-classification">Classification: Unclassified</h4>
+                </div>
+            </section>
+
+            <!-- Drone Classification Buttons -->
+            <section class="droneButtons">
+                <h4>Classification:</h4>
+                <div>
+                    <button id="Trusted" type="button">Trusted</button>
+                    <button id="Neutral" type="button">Neutral</button>
+                    <button id="Hostile" type="button">Hostile</button>
+                </div>
+                <button id="confirmButton" type="button">Confirm</button>
+            </section>
+        </aside>
+
+        <!-- Middle Panel -->
+        <section id="game">
+            <img draggable="false" src="../public/assets/radarLines.png">
+        </section>
+
+        <!-- Right Panel (Recommendations) -->
+        <aside id="recommendation">
+        <% if (recommendations.length > 0) { %>
+            
+                <h4>Recommendation Panel:</h4>
+                <ul>
+                    <% recommendations.forEach(function(rec) { %>
+                        <li><%= rec %></li>
+                    <% }) %>
+                </ul>
+            
+        <% } else { %>
+            <!-- If no recommendations are available, do not render anything -->
+        <% } %>
+        </aside>
+    </section>
+
+    <!-- Initialize user group variable -->
+    <script>
+        var userGroup = "<%= group %>";
+        console.log("User Group:", userGroup);
+    </script>
+
+    <!-- Additional Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script type="module" src="../public/scripts/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/css/style.css" rel="stylesheet">
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script>
+    <!-- Favicon -->
+    <link rel="icon" href="public/assets/favicon.webp" type="image/x-icon">
+    <!-- Page Title -->
+    <title>Security Control Simulation System</title>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="custom-navbar">
+        <div class="navbar-logo">
+            <a>SCSS</a>
+        </div>
+        <ul class="navbar-text">
+            <li>
+                <a href="/home"><span class="glyphicon glyphicon-home"></span> Home</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Scenarios Links Container -->
+    <div class="info">
+        <h1>Task Description</h1>
+        <h3>
+            Hello there! You are a cyber defense expert tasked with protecting a network by classifying incoming requests as "Trusted", "Neutral", or "Hostile" based on provided rules. Misclassifications may lead to a security breach or hinder other staff members from accessing the data needed for their jobs.
+        </h3>
+        <button id="goButton">Start</button>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Navigate to the game page on clicking the Start button
+        document.getElementById('goButton').addEventListener('click', function() {
+            window.location.href = '/game';
+        });
+    </script>
+</body>
+</html>
