@@ -226,14 +226,13 @@ form button {
   border-radius: 50%;
   position: absolute;
   background-color: aqua;
-  /* animation: dot-move 3s linear infinite; */
+  animation: dot-move 3s linear infinite;
 }
 
-/* @keyframes dot-move {
-  from {left: 0; top:0;}
+@keyframes dot-move {
   to {left: 50%; top:50%}
   
-} */
+}
 
 .dot.trusted {
   background-color: green;
