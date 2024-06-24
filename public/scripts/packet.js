@@ -46,3 +46,29 @@ function getRelevantInformation(type) {
     }
     return relevantInfo;
 }
+
+export function getLocationValues(quadrant) {
+    let top;
+    let left;
+    switch (quadrant) {
+        case "topLeft":
+            top = Math.floor(Math.random()*51);
+            left = Math.floor(Math.random()*51);
+            break;
+        case "topRight":
+            top = Math.floor(Math.random()*51);
+            left = Math.floor(Math.random()*50) + 51;
+            break;
+        case "bottomLeft":
+            top = Math.floor(Math.random()*50) + 51;
+            left = Math.floor(Math.random()*51);
+            break;
+        case "bottomRight":
+            top = Math.floor(Math.random()*50) + 51;
+            left = Math.floor(Math.random()*50) + 51;
+            break;
+        default:
+            break;
+    }
+    return [left, top]
+}

@@ -2,7 +2,7 @@
 import { generateRandomIP, generateRandomCountry, generateRandomPacketSize, generateRandomProtocol, generateRandomConnectionTime, generateRandomCertificates } from './dataGenerators.js';
 import { setClassification, initializeClassificationButtons, confirmClassification } from './classification.js';
 import { isValidPosition } from './utils.js';
-import { PacketFactory } from './packet.js';
+import { PacketFactory, getLocationValues } from './packet.js';
 
 // Function to change game styles based on the group
 const adjustGameStyles = () => {
@@ -45,8 +45,6 @@ const start = () => {
   // Create and add the central point without click events
   const visualCenterDot = document.createElement('div');
   visualCenterDot.classList.add('center-dot');
-  visualCenterDot.style.left = `${radius}px`;
-  visualCenterDot.style.top = `${radius}px`;
   gameObj.appendChild(visualCenterDot);
 
 
@@ -54,26 +52,31 @@ const start = () => {
 
   let existingDots = [{ x: radius, y: radius, element: visualCenterDot }];
 
+
+
+  
+
   // Generate random points
   for (let i = 0; i < numberOfDots; i++) {
-    let isValid = false;
-    let retries = 100;
-    let x, y, distance, angle;
+    let isValid = true;
+    // let retries = 100;
+    // let x, y, distance, angle;
 
-    while (!isValid && retries > 0) {
-      angle = Math.random() * 2 * Math.PI;
-      distance = Math.random() * radius;
-      x = distance * Math.cos(angle) + radius;
-      y = distance * Math.sin(angle) + radius;
-      isValid = isValidPosition(x, y, existingDots, minDistance);
-      retries--;
-    }
+    // while (!isValid && retries > 0) {
+    //   angle = Math.random() * 2 * Math.PI;
+    //   distance = Math.random() * radius;
+    //   x = distance * Math.cos(angle) + radius;
+    //   y = distance * Math.sin(angle) + radius;
+    //   isValid = isValidPosition(x, y, existingDots, minDistance);
+    //   retries--;
+    // }
 
     if (isValid) {
       const dot = document.createElement('div');
+      let [x, y] = getLocationValues('topRight')
       dot.classList.add('dot');
-      dot.style.left = `${x}px`;
-      dot.style.top = `${y}px`;
+      dot.style.left = `${x}%`;
+      dot.style.top = `${y}%`;
       gameObj.appendChild(dot);
 
       const dotInfo = PacketFactory('safe');
