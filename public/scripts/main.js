@@ -1,7 +1,7 @@
 // Import functions from other modules (assuming an ES6 environment)
 import { generateRandomIP, generateRandomCountry, generateRandomPacketSize, generateRandomProtocol, generateRandomConnectionTime, generateRandomCertificates } from './dataGenerators.js';
 import { setClassification, initializeClassificationButtons, confirmClassification } from './classification.js';
-import { isValidPosition } from './utils.js';
+import { shuffleArray } from './utils.js';
 import { PacketFactory, getLocationValues } from './packet.js';
 
 // Function to change game styles based on the group
@@ -33,12 +33,10 @@ initializeClassificationButtons();
 // Attach confirmation event
 document.getElementById("confirmButton").addEventListener("click", () => confirmClassification(selectedDotInfo));
 
+
+
 // Define the `start` function to initialize the game
 const start = () => {
-  const numberOfDots = 2;
-  const dotSize = 10;
-  const minDistance = 15;
-  const radius = gameObj.clientWidth / 2 - dotSize;
   let selectedDot = null;
 
 
@@ -47,50 +45,51 @@ const start = () => {
   visualCenterDot.classList.add('center-dot');
   gameObj.appendChild(visualCenterDot);
 
-
-
-
-  let existingDots = [{ x: radius, y: radius, element: visualCenterDot }];
-
-
-
   
 
-  // Generate random points
-  for (let i = 0; i < numberOfDots; i++) {
-    let isValid = true;
-    // let retries = 100;
-    // let x, y, distance, angle;
+  // set up packets and location starts
+  let packets = [];
+  let quadrants = ["topLeft", "topRight", "bottomLeft", "bottomRight"];
+  let types = ["hostile", "safe", "safe", "neutral", "neutral"];
 
-    // while (!isValid && retries > 0) {
-    //   angle = Math.random() * 2 * Math.PI;
-    //   distance = Math.random() * radius;
-    //   x = distance * Math.cos(angle) + radius;
-    //   y = distance * Math.sin(angle) + radius;
-    //   isValid = isValidPosition(x, y, existingDots, minDistance);
-    //   retries--;
-    // }
+  for (let q of quadrants) {
+    for (let t of types) {
+      let packet = PacketFactory(t);
+      let [left, top] = getLocationValues(q);
+      packets.push({left, top, data: packet });
+    }
+  }
+  
+  // mix up order of packets
+  shuffleArray(packets);
+  
+  createPacketElement(packets);
 
-    if (isValid) {
+ // Define delay for packet release
+  function delay(milliseconds) {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  }
+
+  // Create and display packets with delays
+  async function createPacketElement(packets) {
+    for (let packet of packets) {
       const dot = document.createElement('div');
-      let [x, y] = getLocationValues('topRight')
       dot.classList.add('dot');
-      dot.style.left = `${x}%`;
-      dot.style.top = `${y}%`;
+      dot.style.left = `${packet.left}%`;
+      dot.style.top = `${packet.top}%`;
       gameObj.appendChild(dot);
-
-      const dotInfo = PacketFactory('safe');
-
-      existingDots.push({ x, y, element: dot, data: dotInfo });
+      console.log(packet.data)
 
       // Add click event to update connection info and maintain reference
       dot.addEventListener('click', function() {
-        updateConnectionInfo(dotInfo);
-        selectedDotInfo = dotInfo;
+        updateConnectionInfo(packet.data);
+        selectedDotInfo = packet.data;
         selectDot(this);
       });
+      await delay(3000);
+      gameObj.removeChild(dot)
     }
-  }
+}
 
   // Function to select a single dot
   const selectDot = (dotElement) => {

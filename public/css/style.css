@@ -226,7 +226,7 @@ form button {
   border-radius: 50%;
   position: absolute;
   background-color: aqua;
-  animation: dot-move 3s linear infinite;
+  animation: dot-move 3s linear 1;
 }
 
 @keyframes dot-move {
