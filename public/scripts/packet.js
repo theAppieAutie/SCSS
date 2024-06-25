@@ -8,6 +8,7 @@ export function PacketFactory(type) {
         time : generateRandomTime(),
         ipAddress : generateRandomIP(),
         country : generateRandomCountry(),
+        classification: 'undefined',
     };
     let relevantInformation = getRelevantInformation(type);
     for (let key in relevantInformation) {
@@ -31,7 +32,7 @@ function getRelevantInformation(type) {
         case 'safe':
             keys.forEach(key => relevantInfo[key] = values[key].safe);
             break;
-        case 'suspect':
+        case 'neutral':
             let numHostileMin1 = Math.floor(Math.random() * 2) + 1;
             keys.forEach(key => relevantInfo[key] = numHostileMin1-- > 0 ? values[key].hostile : values[key].safe);
 

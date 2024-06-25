@@ -1,5 +1,4 @@
 // Import functions from other modules (assuming an ES6 environment)
-import { generateRandomIP, generateRandomCountry, generateRandomPacketSize, generateRandomProtocol, generateRandomConnectionTime, generateRandomCertificates } from './dataGenerators.js';
 import { setClassification, initializeClassificationButtons, confirmClassification } from './classification.js';
 import { shuffleArray } from './utils.js';
 import { PacketFactory, getLocationValues } from './packet.js';
@@ -26,12 +25,13 @@ document.addEventListener("DOMContentLoaded", applyGroupStyles);
 // Initialize variables and elements
 const gameObj = document.getElementById("game");
 let selectedDotInfo = null;
+let dotElement = null;
 
 // Initialize classification buttons
 initializeClassificationButtons();
 
 // Attach confirmation event
-document.getElementById("confirmButton").addEventListener("click", () => confirmClassification(selectedDotInfo));
+document.getElementById("confirmButton").addEventListener("click", () => confirmClassification(dotElement, selectedDotInfo));
 
 
 
@@ -78,15 +78,15 @@ const start = () => {
       dot.style.left = `${packet.left}%`;
       dot.style.top = `${packet.top}%`;
       gameObj.appendChild(dot);
-      console.log(packet.data)
 
       // Add click event to update connection info and maintain reference
       dot.addEventListener('click', function() {
         updateConnectionInfo(packet.data);
         selectedDotInfo = packet.data;
+        dotElement = this;
         selectDot(this);
       });
-      await delay(3000);
+      await delay(10000);
       gameObj.removeChild(dot)
     }
 }

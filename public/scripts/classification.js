@@ -26,13 +26,13 @@ export const setClassification = (classification) => {
 };
 
 // Confirm the classification for the selected point
-export const confirmClassification = (selectedDotInfo) => {
+export const confirmClassification = (dotElement, selectedDotInfo) => {
   if (selectedClassification && selectedDotInfo) {
     // Assign the selected classification to the data object
     selectedDotInfo.classification = selectedClassification;
 
     // Update the corresponding dot element's class based on the classification
-    const dotElement = selectedDotInfo.element;
+    
     dotElement.classList.remove('trusted', 'neutral', 'hostile');
 
     switch (selectedClassification) {
@@ -49,6 +49,9 @@ export const confirmClassification = (selectedDotInfo) => {
 
     // Update the classification field in the connection information panel
     document.getElementById('info-classification').textContent = `Classification: ${selectedClassification}`;
+    
+    // update packet data
+    selectedDotInfo.data.classification = selectedClassification;
   } else {
     console.log("No classification selected.");
   }
