@@ -26,8 +26,15 @@ document.addEventListener("DOMContentLoaded", adjustGameStyles);
 
 // Initialize variables and elements
 const gameObj = document.getElementById("game");
+const panelsElement = document.getElementsByClassName("panels")[0];
 let selectedDotInfo = null;
 let dotElement = null;
+
+if (!config.packetInfoOnLeft) {
+  panelsElement.style.flexDirection = "row-reverse";
+}
+
+
 
 // Initialize classification buttons
 initializeClassificationButtons();
@@ -114,6 +121,7 @@ const start = () => {
     document.getElementById('info-portnumber').textContent = `Port Number: ${info.portNumber}`;
     document.getElementById('info-fragmentation').textContent = `Fragmentation: ${info.fragmentation}`;
     document.getElementById('info-classification').textContent = `Classification: ${info.classification}`;
+
   };
   // End trial
   setTimeout(endTrial, timeForTrial);
