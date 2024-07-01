@@ -1,7 +1,8 @@
 // Import functions from other modules (assuming an ES6 environment)
-import { setClassification, initializeClassificationButtons, confirmClassification } from './classification.js';
+import { initializeClassificationButtons, confirmClassification } from './classification.js';
 import { shuffleArray } from './utils.js';
 import { PacketFactory, getLocationValues } from './packet.js';
+import { config } from './config.js';
 
 // Function to change game styles based on the group
 const adjustGameStyles = () => {
@@ -12,15 +13,16 @@ const adjustGameStyles = () => {
 };
 
 // Apply style adjustments based on the user's group
-const applyGroupStyles = () => {
-  if (userGroup === "noAdvisor") {
-    adjustGameStyles();
-  }
-  // Add conditions for other groups if needed
-};
+// const applyGroupStyles = () => {
+//   if (userGroup === "noAdvisor") {
+//     adjustGameStyles();
+//   }
+//   // Add conditions for other groups if needed
+// };
 
 // Execute `applyGroupStyles` when the page is fully loaded
-document.addEventListener("DOMContentLoaded", applyGroupStyles);
+// document.addEventListener("DOMContentLoaded", applyGroupStyles);
+document.addEventListener("DOMContentLoaded", adjustGameStyles);
 
 // Initialize variables and elements
 const gameObj = document.getElementById("game");
@@ -39,13 +41,13 @@ document.getElementById("confirmButton").addEventListener("click", () => confirm
 const start = () => {
   let selectedDot = null;
 
+  const timeForTrial = config.trialLength * 60000;
+  const timePerPacket = timeForTrial / 20;
 
   // Create and add the central point without click events
   const visualCenterDot = document.createElement('div');
   visualCenterDot.classList.add('center-dot');
   gameObj.appendChild(visualCenterDot);
-
-  
 
   // set up packets and location starts
   let packets = [];
@@ -77,6 +79,7 @@ const start = () => {
       dot.classList.add('dot');
       dot.style.left = `${packet.left}%`;
       dot.style.top = `${packet.top}%`;
+      dot.style.animation = `dot-move ${timePerPacket}ms linear 1`;
       gameObj.appendChild(dot);
 
       // Add click event to update connection info and maintain reference
@@ -86,7 +89,7 @@ const start = () => {
         dotElement = this;
         selectDot(this);
       });
-      await delay(10000);
+      await delay(timePerPacket);
       gameObj.removeChild(dot)
     }
 }
@@ -112,7 +115,14 @@ const start = () => {
     document.getElementById('info-fragmentation').textContent = `Fragmentation: ${info.fragmentation}`;
     document.getElementById('info-classification').textContent = `Classification: ${info.classification}`;
   };
+  // End trial
+  setTimeout(endTrial, timeForTrial);
 };
+
+// handle end of the trial
+const endTrial = () => {
+  window.location.href = './home';
+}
 
 // Execute the `start` function after a delay
 setTimeout(start, 1000);

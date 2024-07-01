@@ -209,7 +209,7 @@ form button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* border-radius: 50%; */
+  border-radius: 50%;
   text-align: center;
   overflow: hidden; /* Ensure no overflow */
 }
@@ -226,7 +226,7 @@ form button {
   border-radius: 50%;
   position: absolute;
   background-color: aqua;
-  animation: dot-move 10s linear 1;
+
 }
 
 @keyframes dot-move {
