@@ -5,6 +5,12 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="public/css/style.css" rel="stylesheet">
+    <!-- JavaScript Logic -->
+    <script>
+        var username = "<%= username %>";
+        sessionStorage.setItem('username', username)
+
+    </script>
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -37,12 +43,8 @@
         <button id="goButton">Start</button>
     </div>
 
-    <!-- JavaScript Logic -->
-    <script>
-        // Navigate to the game page on clicking the Start button
-        document.getElementById('goButton').addEventListener('click', function() {
-            window.location.href = '/game';
-        });
-    </script>
+
+    <!-- additional script -->
+    <script type="module" src="../public/scripts/main.js"></script>
 </body>
 </html>

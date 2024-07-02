@@ -115,7 +115,8 @@ app.post("/", (req, res) => {
 
 // GET Home: Display home view
 app.get("/home", (req, res) => {
-  res.render("home.ejs");
+  res.render("home.ejs", { username : req.session.username});
+  
 });
 
 // POST Test Scenario: Save data to a file

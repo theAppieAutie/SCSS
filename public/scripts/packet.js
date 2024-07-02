@@ -53,7 +53,7 @@ export function getLocationValues(quadrant) {
     let top;
     let left;
     switch (quadrant) {
-        case "topLeft":
+       case "topLeft":
             top = Math.floor(Math.random()*51);
             left = Math.floor(Math.random()*51);
             break;
