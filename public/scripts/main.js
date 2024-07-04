@@ -5,20 +5,33 @@ import { Experiment } from "./experiment.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     let experiment = sessionStorage.getItem('experimentState');
-    const username = sessionStorage.getItem('username');
-    console.log(experiment)
+    
     if (!experiment) {
-        experiment = new Experiment();
-        experiment.addId(username);
+        const participant = sessionStorage.getItem('username');
+        let data = {participant:participant}
+        
+        experiment = new Experiment(data);
+    } else {
+        
+        experiment = new Experiment(JSON.parse(experiment));
+        
+    }
+
+    let trial = sessionStorage.getItem("trial");
+    if (sessionStorage.getItem("trial")) {
+        experiment.addTrialInputToTrialData(JSON.parse(trial));
         experiment.saveState();
-    } 
-    console.log(experiment)
+        console.log(experiment.isExperimentComplete());
+        console.log(experiment.trialData.length);
+    }
+    
     
 
     
     if (window.location.pathname === '/game') {
         if (experiment.isExperimentComplete()) {
             // Handle experiment complete
+            console.log("experiment complete")
         } else {
             // Start the trial
             startTrial(experiment);
@@ -26,7 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (window.location.pathname === '/home') {
         document.getElementById('goButton').addEventListener('click', () => {
             experiment.saveState();
-            window.location.href = '/game';
+            if (experiment.isExperimentComplete()) {
+                console.log("end of experiment");
+            } else {
+                window.location.href = '/game';
+            }
         });
     }
 

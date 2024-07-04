@@ -1,6 +1,3 @@
-//  imports for rehydration
-
-
 // Fisher-Yates array shuffle algortihm
 export function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {

@@ -8,7 +8,7 @@ export function PacketFactory(type) {
         time : generateRandomTime(),
         ipAddress : generateRandomIP(),
         country : generateRandomCountry(),
-        classification: 'undefined',
+        classification: 'unclassified',
         packetType : type,
     };
     let relevantInformation = getRelevantInformation(type);

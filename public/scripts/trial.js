@@ -28,7 +28,9 @@ let selectedDotInfo = null;
 let dotElement = null;
 
 const experiment = sessionStorage.getItem('experimentState');
+
 const data = JSON.parse(experiment);
+
 
 if (!config.packetInfoOnLeft) {
 panelsElement.style.flexDirection = "row-reverse";
@@ -64,7 +66,6 @@ const startTrial = () => {
     // Create and display packets with delays
     async function createPacketElement(packets) {
       for (let packet of packets) {
-        console.log(packet)
         const dot = document.createElement('div');
         dot.classList.add('dot');
         dot.style.left = `${packet.location[0]}%`;
@@ -112,7 +113,13 @@ const startTrial = () => {
   
 // handle end of the trial
 const endTrial = () => {
-window.location.href = './home';
+  
+  let inputs = [];
+  for (let [k,v] of data.packetArray.entries()) {
+   inputs.push(v.classification)
+  }
+  sessionStorage.setItem("trial", JSON.stringify(inputs));
+  window.location.href = './home';
 }
 
 // Execute the `start` function after a delay

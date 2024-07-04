@@ -5,27 +5,10 @@ import { shuffleArray } from "./utils.js";
 
 
 export class Experiment {
-    constructor() {
-        if (Experiment.instance) {
-            return Experiment.instance;
-        }
-
-        this.participant = null;
-        this.packetArray = this.setPacketArray();
-        this.trialData = [];
-        
-        Experiment.instance = this;
-    }
-
-    static getInstance() {
-        if (!Experiment.instance) {
-            Experiment.instance = new Experiment();
-        }
-        return Experiment.instance;
-    }
-
-    addId(id) {
-        this.participant = id;
+    constructor(data) {
+        this.participant = data.participant;
+        this.packetArray = data.packetArray ? data.packetArray.map((x) => x) : this.setPacketArray();
+        this.trialData = data.trialData ? data.trialData.map((x) => x) : [];
     }
 
     addTrialInputToTrialData(trialInput) {
@@ -50,7 +33,7 @@ export class Experiment {
 
     
     isExperimentComplete() {
-        return this.trialData.length >= 4;
+        return this.trialData.length >= 1;
     }
 
     saveState() {
