@@ -132,6 +132,21 @@ app.post("/testScenario", (req, res) => {
   res.json({ msg: 'Data saved successfully' });
 });
 
+// GET information view
+app.get("/information", (req, res) => {
+  res.render("information.ejs");
+})
+
+// GET consent view
+app.get("/consent", (req, res) => {
+  res.render("consent.ejs");
+})
+
+// GET rules view
+app.get("/rules", (req, res) => {
+  res.render("rules.ejs");
+})
+
 // Start the server
 app.listen(5050, () => {
   console.log(`Server running at http://localhost:5050`);

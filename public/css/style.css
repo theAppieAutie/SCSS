@@ -110,6 +110,11 @@ form button {
   font-size: large;
 }
 
+.info li {
+  text-align: left;
+  list-style:inside;
+}
+
 /* Main Game Panels */
 .panels {
   display: flex;

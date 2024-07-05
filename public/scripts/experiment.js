@@ -33,7 +33,7 @@ export class Experiment {
 
     
     isExperimentComplete() {
-        return this.trialData.length >= 1;
+        return this.trialData.length >= 4;
     }
 
     saveState() {

@@ -4,6 +4,8 @@ import { Experiment } from "./experiment.js";
 
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // set up Experiment object from previous data if data exists
     let experiment = sessionStorage.getItem('experimentState');
     
     if (!experiment) {
@@ -21,8 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sessionStorage.getItem("trial")) {
         experiment.addTrialInputToTrialData(JSON.parse(trial));
         experiment.saveState();
-        console.log(experiment.isExperimentComplete());
-        console.log(experiment.trialData.length);
+        console.log(experiment.trialData);
     }
     
     
