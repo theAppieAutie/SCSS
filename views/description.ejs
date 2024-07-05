@@ -5,12 +5,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="public/css/style.css" rel="stylesheet">
-    <!-- JavaScript Logic -->
-    <script>
-        var username = "<%= username %>";
-        sessionStorage.setItem('username', username)
 
-    </script>
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -40,11 +35,16 @@
         <h3>
             Hello there! You are a cyber defense expert tasked with protecting a network by classifying incoming requests as "Trusted", "Neutral", or "Hostile" based on provided rules. Misclassifications may lead to a security breach or hinder other staff members from accessing the data needed for their jobs.
         </h3>
-        <button id="goButton">Start</button>
+        <button id="proceedToTrial">Start</button>
     </div>
 
-
+    
     <!-- additional script -->
-    <script type="module" src="../public/scripts/main.js"></script>
+    <!-- <script type="module" src="../public/scripts/main.js"></script> -->
 </body>
+<script>
+    document.getElementById("proceedToTrial").addEventListener("click", () => {
+        window.location.href = '/game';
+    })
+</script>
 </html>

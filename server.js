@@ -6,6 +6,7 @@ if (process.env.NODE_ENV !== "production") {
 // Import modules and configurations
 const express = require("express");
 const app = express();
+const Experiment = require("./public/scripts/experiment.js");
 const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
@@ -44,47 +45,34 @@ app.use(
 
 // Routes
 
-// GET Login: Render the login page
+// GET information view
 app.get("/", (req, res) => {
+  res.render("information.ejs");
+});
+
+// Consent route
+app.get("/consent", (req, res) => {
+  res.render("consent.ejs");
+});
+
+app.post("/consent", (req,res) => {
+  res.redirect("/login");
+} )
+
+// Login route
+app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
-// GET /game: Render the game page based on user group
-app.get('/game', (req, res) => {
-  // Ensure session is defined
-  if (!req.session.group) {
-    return res.redirect('/');
-  }
 
-  // Retrieve user group from the session
-  const group = req.session.group;
-  let recommendations = [];
-
-  // Define recommendations based on group
-  switch (group) {
-    case "noAdvisor":
-      recommendations = []; // No recommendations for this group
-      break;
-    case "aiAdvisor":
-      recommendations = ["AI-based recommendations."];
-      break;
-    case "computerAdvisor":
-      recommendations = ["Computer-based recommendations."];
-      break;
-    case "humanAdvisor":
-      recommendations = ["Human-based recommendations."];
-      break;
-    default:
-      recommendations = []; // Default to no recommendations
-  }
-
-  // Pass recommendations to the view
-  res.render('game.ejs', { group, recommendations });
-});
-
-// POST Login: Handle login and assign user group
-app.post("/", (req, res) => {
+app.post("/login", (req, res) => {
   const username = req.body.ID;
+  let experiment = Experiment.getInstance();
+
+  if (!experiment.participant) {
+    experiment.init(username);
+  }
+
   const groupNumber = (parseInt(username) - 1) % 4 + 1;
 
   let groupName = '';
@@ -108,16 +96,58 @@ app.post("/", (req, res) => {
   // Save the group in the user's session
   req.session.username = username;
   req.session.group = groupName;
+  req.session.experiment = experiment;
 
-  // Redirect to the home page after login
-  res.redirect('/home');
+  // Redirect to the description page after login
+  res.redirect('/description');
 });
 
 // GET Home: Display home view
-app.get("/home", (req, res) => {
-  res.render("home.ejs", { username : req.session.username});
+app.get("/description", (req, res) => {
+  res.render("description.ejs");
   
 });
+
+
+// GET /game: Render the game page based on user group
+app.get('/game', (req, res) => {
+  // Ensure session is defined
+  if (!req.session.group) {
+    return res.redirect('/');
+  }
+
+  // Retrieve user group from the session
+  const group = req.session.group;
+  let recommendations = [];
+  const experiment = Experiment.getInstance();
+  const packetArray = experiment.packetArray.map(x => x);
+  console.log(packetArray.length);
+
+  // Define recommendations based on group
+  switch (group) {
+    case "noAdvisor":
+      recommendations = []; // No recommendations for this group
+      break;
+    case "aiAdvisor":
+      recommendations = ["AI-based recommendations."];
+      break;
+    case "computerAdvisor":
+      recommendations = ["Computer-based recommendations."];
+      break;
+    case "humanAdvisor":
+      recommendations = ["Human-based recommendations."];
+      break;
+    default:
+      recommendations = []; // Default to no recommendations
+  }
+
+  // Pass recommendations to the view
+  res.render('game.ejs', { group, recommendations, packetArray: JSON.stringify(packetArray) });
+});
+
+
+
+
 
 // POST Test Scenario: Save data to a file
 app.post("/testScenario", (req, res) => {
@@ -132,15 +162,9 @@ app.post("/testScenario", (req, res) => {
   res.json({ msg: 'Data saved successfully' });
 });
 
-// GET information view
-app.get("/information", (req, res) => {
-  res.render("information.ejs");
-})
 
-// GET consent view
-app.get("/consent", (req, res) => {
-  res.render("consent.ejs");
-})
+
+
 
 // GET rules view
 app.get("/rules", (req, res) => {

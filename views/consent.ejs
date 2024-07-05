@@ -120,7 +120,12 @@
             </form>
         </section>
         <p><bold>THANK YOU FOR PARTICIPATING IN OUR RESEARCH</bold></p>
-        
+        <button class="btn" id="proceedToLogin">Confirm</button>
     </section>
 </body>
+<script>
+    document.getElementById("proceedToLogin").addEventListener("click", () => {
+        window.location.href = "/login";
+    })
+</script>
 </html>

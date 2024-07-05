@@ -81,6 +81,12 @@
         <p>Should you have any questions relating to this research project, you may contact us during normal working hours: </p>
         <p>Mordecai Otter otterm@cardiff.ac.uk or Prof. Phil Morgan morganphil@cardiff.ac.uk or Professor Rob Honey - honey@cardiff.ac.uk</p>
         <p><bold>Thank you for considering taking part in this research project. If you decide to participate you will be given an option to download a copy of this document. </bold></p>
+        <button class="btn" id="proceedToConsent">Continue</button>
     </div>
 </body>
+<script>
+    document.getElementById('proceedToConsent').addEventListener("click", () => {
+        window.location.href = '/consent';
+    })
+</script>
 </html>

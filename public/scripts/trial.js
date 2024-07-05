@@ -27,9 +27,9 @@ const panelsElement = document.getElementsByClassName("panels")[0];
 let selectedDotInfo = null;
 let dotElement = null;
 
-const experiment = sessionStorage.getItem('experimentState');
+// const experiment = sessionStorage.getItem('experimentState');
 
-const data = JSON.parse(experiment);
+// const data = JSON.parse(experiment);
 
 
 if (!config.packetInfoOnLeft) {
@@ -56,7 +56,7 @@ const startTrial = () => {
   
   
     
-    createPacketElement(data.packetArray);
+    createPacketElement(packetArray);
   
    // Define delay for packet release
     function delay(milliseconds) {
@@ -115,7 +115,7 @@ const startTrial = () => {
 const endTrial = () => {
   
   let inputs = [];
-  for (let [k,v] of data.packetArray.entries()) {
+  for (let [k,v] of packetArray.entries()) {
    inputs.push(v.classification)
   }
   sessionStorage.setItem("trial", JSON.stringify(inputs));

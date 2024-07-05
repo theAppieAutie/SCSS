@@ -1,8 +1,8 @@
 // import dataGenerator functions
-import { generateRandomCheckSum, generateRandomTime, generateRandomIP, generateRandomCountry } from './dataGenerators.js';
+const { generateRandomCheckSum, generateRandomTime, generateRandomIP, generateRandomCountry } = require('./dataGenerators.js');
 
 // create overall packet - parameter = type of packet [hostile, safe , suspect]
-export function PacketFactory(type) {
+function PacketFactory(type) {
     let packet = {
         checkSum : generateRandomCheckSum(),
         time : generateRandomTime(),
@@ -49,7 +49,7 @@ function getRelevantInformation(type) {
     return relevantInfo;
 }
 
-export function getLocationValues(quadrant) {
+function getLocationValues(quadrant) {
     let top;
     let left;
     switch (quadrant) {
@@ -74,3 +74,8 @@ export function getLocationValues(quadrant) {
     }
     return [left, top]
 }
+
+module.exports = {
+    PacketFactory,
+    getLocationValues
+};
