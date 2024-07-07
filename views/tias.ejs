@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/css/style.css" rel="stylesheet">
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script> -->
+    <!-- Favicon -->
+    <link rel="icon" href="public/assets/favicon.webp" type="image/x-icon">
+    <!-- Page Title -->
+    <title>Security Control Simulation System</title>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="custom-navbar">
+        <div class="navbar-logo">
+            <a>SCSS</a>
+        </div>
+        <ul class="navbar-text">
+            <li>
+                <a href="/home"><span class="glyphicon glyphicon-home"></span> Home</a>
+            </li>
+        </ul>
+    </nav>
+    <section class="info">
+        <section class="container">
+            <h1>Checklist for Trust between People and Automation</h1>
+            <p>Below is a list of statments for evaluating trust between people and automation. There are several scales for you to rate the intensity of your feeling of trust, or your impression of the system while operating a machine. Please click the number which best describes your feeling or your impression</p>
+            <p><bold>(Note: not at all = 1: extremely = 7)</bold></p>
+        </section>
+        
+        <form action="" method="post">
+            <div class="form-group">
+                <label for="tias-1">1. The system is deceptive</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-1-<%= i%>" name="tias-1" value="<%= i %>">
+                        <label for="tias-1-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-2">2. The system behaves in an underhanded manner</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-2-<%= i%>" name="tias-2" value="<%= i %>">
+                        <label for="tias-2-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-3">3. I am suspicious if the system's intent, action, or outputs</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-3-<%= i%>" name="tias-3" value="<%= i %>">
+                        <label for="tias-3-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-4">4. I am wary of the system</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-4-<%= i%>" name="tias-4" value="<%= i %>">
+                        <label for="tias-4-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-5">5. The systems actions will have a harmful or injurous outcome</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-5-<%= i%>" name="tias-5" value="<%= i %>">
+                        <label for="tias-5-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-6">6. I am confident in the system</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-6-<%= i%>" name="tias-6" value="<%= i %>">
+                        <label for="tias-6-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-7">7. The system provides security</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-7-<%= i%>" name="tias-7" value="<%= i %>">
+                        <label for="tias-7-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-8">8. The system has integrity</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-8-<%= i%>" name="tias-8" value="<%= i %>">
+                        <label for="tias-8-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-9">9. The system is dependable</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-9-<%= i%>" name="tias-9" value="<%= i %>">
+                        <label for="tias-9-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-10">10. The system is reliable</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-10-<%= i%>" name="tias-10" value="<%= i %>">
+                        <label for="tias-10-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-11">11. I can trust the system</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-11-<%= i%>" name="tias-11" value="<%= i %>">
+                        <label for="tias-11-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tias-12">12. I am familiar with the system</label>
+                <div class="likert-scale">
+                    <% for (let i = 1; i <= 7; i++) {%>
+                        <input type="radio" id="tias-12-<%= i%>" name="tias-12" value="<%= i %>">
+                        <label for="tias-12-<%= i%>"><%= i%></label>
+                    <% } %>
+                </div>
+            </div>
+        </form>
+    </section>
+
+</body>
+</html>

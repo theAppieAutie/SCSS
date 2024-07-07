@@ -171,6 +171,16 @@ app.get("/rules", (req, res) => {
   res.render("rules.ejs");
 })
 
+// get TIAS view
+app.get("/tias", (req,res) => {
+  res.render("tias.ejs");
+});
+
+// get sart view
+app.get("/sart", (req,res) => {
+  res.render("sart.ejs");
+})
+
 // Start the server
 app.listen(5050, () => {
   console.log(`Server running at http://localhost:5050`);

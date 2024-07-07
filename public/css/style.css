@@ -280,6 +280,29 @@ form button {
   color: #D9D9D9;
 }
 
+/* scales */
+.likert-scale {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.likert-scale label {
+  margin-bottom: 0;
+}
+.likert-scale input {
+  display: none;
+}
+.likert-scale input:checked + label  {
+  background-color: #007bff;
+  color: white;
+}
+.likert-scale label {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
 /* Not used yet but a possibility for censoring certain data points - need clarity on when it will be needed before implementation */
 .blur {
   filter: blur(1.5rem);
