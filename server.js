@@ -169,7 +169,7 @@ app.post("/testScenario", (req, res) => {
 // GET rules view
 app.get("/rules", (req, res) => {
   res.render("rules.ejs");
-})
+});
 
 // get TIAS view
 app.get("/tias", (req,res) => {
@@ -189,8 +189,12 @@ app.get("/nasa", (req,res) => {
 // get debrief view
 app.get("/debrief", (req, res) => {
   res.render("debrief.ejs");
-})
+});
 
+// get feedback view
+app.get("/feedback", (req,res) => {
+  res.render("feedback.ejs");
+})
 // Start the server
 app.listen(5050, () => {
   console.log(`Server running at http://localhost:5050`);
