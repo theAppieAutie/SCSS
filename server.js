@@ -179,6 +179,16 @@ app.get("/tias", (req,res) => {
 // get sart view
 app.get("/sart", (req,res) => {
   res.render("sart.ejs");
+});
+
+// get nasa view
+app.get("/nasa", (req,res) => {
+  res.render("nasa.ejs");
+});
+
+// get debrief view
+app.get("/debrief", (req, res) => {
+  res.render("debrief.ejs");
 })
 
 // Start the server
