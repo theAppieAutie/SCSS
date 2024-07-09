@@ -19,6 +19,7 @@ class Experiment {
         this.scalesData = {'preExp' : {},
                             'midExp' : {},
                             'postExp' : {}};
+        this.stage = 'begin'
 
         Experiment.instance = this;
     }
@@ -63,19 +64,34 @@ class Experiment {
         return packets.map((x) => x);    
     }
 
-    
-    getStageOfExperiment() {
-        if (this.testTrial.length < 1) {
-            return "test";
-        } else if (this.trialData.length < 2) {
-            return "nextTrial";
-        } else if (this.trialData.length === 2) {
+    getCurrentStage() {
+        return this.stage
+    }
+
+    setCurrentStage() {
+        this.stage = this.getNextStage();
+    }
+    getNextStage() {
+        if (this.stage === 'begin') {
+            return 'test'
+        } else if (this.stage === 'test') {
+            return "preExperiment";
+        } else if (this.stage === 'preExperiment') {
+            return "trial1";
+        } else if (this.stage === 'trial1') {
+            return "trial2";
+        } else if (this.stage === 'trial2') {
             return "midExperiment";
-        } else if (this.trialData.length === 4) {
-            return "end";
+        } else if (this.stage === 'midExperiment') {
+            return "trial3";
+        } else if (this.stage === 'trial3') {
+            return "trial4";
+        } else if (this.stage === 'trial4') {
+            return "endExperiment";
+        } else if (this.stage === "endExperiment" ) {
+           return "debrief";
         } else {
-            console.log("error");
-            return "error";
+            return "error"
         }
         
     }
@@ -86,7 +102,7 @@ class Experiment {
           let j = Math.floor(Math.random() * (i + 1));
           [array[i], array[j]] = [array[j], array[i]];
         }
-      }
+    }
 
 }
 

@@ -32,7 +32,7 @@
         <h1>NASA Task Load Index</h1>
         <p class="m-5">Hart and Staveland’s NASA Task Load Index (TLX) method assesses work load on five 7-point scales. Increments of high, medium and low estimates for each point result in 21 gradations on the scales.</p>
         
-        <form action="" method="post" class="m-5">
+        <form action="/scales" method="post" class="m-5">
             <div class="form-group m-2 mt-1">
                 <label for="nasa-1"><h2>Mental Demand</h2><p class="form-text">How mentally demanding was the task?</p></label>
                 <input type="range" class="form-range mt-2" step="5" id="nasa-1">
@@ -75,7 +75,7 @@
                     <span>Low</span><span>Medium</span><span>High</span>
                 </div>
             </div>
-
+            <input type="submit" role="button" value="Submit">
         </form>
         
     </section>

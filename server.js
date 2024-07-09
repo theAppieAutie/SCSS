@@ -27,22 +27,35 @@ app.set("view-engine", "ejs");
 app.use("/public", express.static(path.join(__dirname, "/public")));
 app.use(express.static(path.join(__dirname, "/public")));
 
-// Middleware
+// Middleware and helpers
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(flash());
 app.use(methodOverride('_method'));
 
+// check for routing purposes experiment state
 const checkStageOfExperiment = (req, res, next) => {
   const experiment = Experiment.getInstance()
-  const stage = experiment.getStageOfExperiment();
-  console.log(stage);
+  const stage = experiment.getCurrentStage();
   req.session.stage = stage;
-  if (stage === 'midExperiment' || stage === 'end') {
-    res.redirect('/tias');
+  experiment.setCurrentStage();
+  if (stage.includes('Experiment')) {
+    res.redirect('/scales');
+  } else if (stage.includes('debrief')) {
+    res.redirect('/feedback');
   } else {
-    next();
+    next()
+  }
+}
+
+
+
+// Fisher-Yates array shuffle algortihm
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
@@ -173,6 +186,8 @@ app.post("/addTrial", (req, res) => {
 
 
 
+
+
 // POST Test Scenario: Save data to a file
 app.post("/testScenario", (req, res) => {
   const dataToBeLogged = JSON.stringify(req.body);
@@ -187,7 +202,30 @@ app.post("/testScenario", (req, res) => {
 });
 
 
+//  get scales views
+app.get("/scales", (req, res) => {
+  let scales = ['/tias', '/sart', '/nasa'];
+  shuffleArray(scales);
+  req.session.scales = scales;
+  
+  let nextScale = scales.pop();
+  req.session.currentScale = nextScale;
+  res.redirect(nextScale);
+})
 
+// handle scales posts
+app.post("/scales", (req, res) => {
+  console.log(req.body);
+  
+  if (req.session.scales.length === 0) { // check if scales complete
+    return res.redirect("/rules");
+  }
+  let scales = req.session.scales
+  let nextScale = scales.pop();
+  req.session.currentScale = nextScale;
+  res.redirect(nextScale);
+
+})
 
 
 // GET rules view
