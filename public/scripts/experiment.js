@@ -12,8 +12,13 @@ class Experiment {
             return Experiment.instance;
         }
         this.participant = null;
+        this.condition = null;
         this.packetArray = this.setPacketArray();
+        this.testTrial = [];
         this.trialData = [];
+        this.scalesData = {'preExp' : {},
+                            'midExp' : {},
+                            'postExp' : {}};
 
         Experiment.instance = this;
     }
@@ -25,18 +30,27 @@ class Experiment {
         return Experiment.instance;
     }
 
-    init(participant) {
+    init(participant, condition) {
         this.participant = participant;
+        this.condition = condition;
+    }
+
+    addTestTrial(testTrial) {
+        this.testTrial.push(testTrial);
     }
 
     addTrialInputToTrialData(trialInput) {
         this.trialData.push(trialInput);
     }
+    
+    addScalesData(category, scale, data) {
+        this.scalesData[category][scale] = data;
+    }
 
     setPacketArray() {
         let packets = [];
         let quadrants = ["topLeft", "topRight", "bottomLeft", "bottomRight"];
-        let types = ["hostile", "safe", "safe", "neutral", "neutral"];
+        let types = ["hostile", "hostile", "safe", "safe", "neutral", "neutral"];
 
         for (let q of quadrants) {
             for (let t of types) {
@@ -50,8 +64,20 @@ class Experiment {
     }
 
     
-    isExperimentComplete() {
-        return this.trialData.length >= 4;
+    getStageOfExperiment() {
+        if (this.testTrial.length < 1) {
+            return "test";
+        } else if (this.trialData.length < 2) {
+            return "nextTrial";
+        } else if (this.trialData.length === 2) {
+            return "midExperiment";
+        } else if (this.trialData.length === 4) {
+            return "end";
+        } else {
+            console.log("error");
+            return "error";
+        }
+        
     }
 
     // Fisher-Yates array shuffle algortihm

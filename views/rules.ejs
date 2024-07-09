@@ -40,8 +40,13 @@
         <p>Protocol: ICMP = hostile, HTTPS = safe</p>
         <p>Fragmentation: Yes= hostile, No = safe</p>
         <p>Certificates: Expired = hostile, Valid = safe</p>
-        <button>Start Trial</button>
+        <button id="proceedToTrial">Start Trial</button>
     </section>
 
 </body>
+<script>
+    document.getElementById("proceedToTrial").addEventListener("click", () => {
+        window.location.href = '/game';
+    })
+</script>
 </html>

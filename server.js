@@ -34,6 +34,18 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(flash());
 app.use(methodOverride('_method'));
 
+const checkStageOfExperiment = (req, res, next) => {
+  const experiment = Experiment.getInstance()
+  const stage = experiment.getStageOfExperiment();
+  console.log(stage);
+  req.session.stage = stage;
+  if (stage === 'midExperiment' || stage === 'end') {
+    res.redirect('/tias');
+  } else {
+    next();
+  }
+}
+
 // Session Configuration
 app.use(
   session({
@@ -69,11 +81,9 @@ app.post("/login", (req, res) => {
   const username = req.body.ID;
   let experiment = Experiment.getInstance();
 
-  if (!experiment.participant) {
-    experiment.init(username);
-  }
 
-  const groupNumber = (parseInt(username) - 1) % 4 + 1;
+
+  const groupNumber = (parseInt(username) - 1) % 3 + 1;
 
   let groupName = '';
   switch (groupNumber) {
@@ -81,16 +91,17 @@ app.post("/login", (req, res) => {
       groupName = "noAdvisor";
       break;
     case 2:
-      groupName = "aiAdvisor";
+      groupName = "humanAdvisor";
       break;
     case 3:
-      groupName = "computerAdvisor";
-      break;
-    case 4:
-      groupName = "humanAdvisor";
+      groupName = "aiAdvisor";
       break;
     default:
       groupName = "noAdvisor"; // Default to noAdvisor
+  }
+
+  if (!experiment.participant) {
+    experiment.init(username, groupName);
   }
 
   // Save the group in the user's session
@@ -121,7 +132,7 @@ app.get('/game', (req, res) => {
   let recommendations = [];
   const experiment = Experiment.getInstance();
   const packetArray = experiment.packetArray.map(x => x);
-  console.log(packetArray.length);
+  
 
   // Define recommendations based on group
   switch (group) {
@@ -142,10 +153,23 @@ app.get('/game', (req, res) => {
   }
 
   // Pass recommendations to the view
-  res.render('game.ejs', { group, recommendations, packetArray: JSON.stringify(packetArray) });
+  res.render('game.ejs', { group, recommendations, packetArray: JSON.stringify(packetArray)});
 });
 
+//  handle adding data to Experiment
+app.post("/addTrial", (req, res) => {
+  const experiment = Experiment.getInstance();
+ 
+  const inputs = req.body['input'];
+  const stage = req.session.stage;
+  if (stage === 'test') {
+    experiment.addTestTrial(inputs);
+  } else {
+    experiment.addTrialInputToTrialData(inputs);
+  }
 
+  return res.send().status(200);
+})
 
 
 
@@ -167,7 +191,7 @@ app.post("/testScenario", (req, res) => {
 
 
 // GET rules view
-app.get("/rules", (req, res) => {
+app.get("/rules", checkStageOfExperiment, (req, res) => {
   res.render("rules.ejs");
 });
 

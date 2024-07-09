@@ -108,7 +108,7 @@ const startTrial = () => {
   
     };
     // End trial
-    setTimeout(endTrial, timeForTrial);
+    setTimeout(endTrial, timeForTrial + timePerPacket);
   };
   
 // handle end of the trial
@@ -116,10 +116,28 @@ const endTrial = () => {
   
   let inputs = [];
   for (let [k,v] of packetArray.entries()) {
-   inputs.push(v.classification)
+   inputs.push(v.classification);
   }
-  sessionStorage.setItem("trial", JSON.stringify(inputs));
-  window.location.href = './home';
+  handleInput(inputs);
+
+}
+
+// handle participant input
+async function handleInput(data) {
+  await fetch('/addTrial', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({input:data})
+  }).then((response) => {
+    console.log(response);
+    if (response.ok) {
+      window.location.href = '/rules';
+    }
+  })
+
 }
 
 // Execute the `start` function after a delay
