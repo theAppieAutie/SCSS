@@ -39,7 +39,6 @@ const checkStageOfExperiment = (req, res, next) => {
   const experiment = Experiment.getInstance()
   const stage = experiment.getCurrentStage();
   req.session.stage = stage;
-  experiment.setCurrentStage();
   if (stage.includes('Experiment')) {
     res.redirect('/scales');
   } else if (stage.includes('debrief')) {
@@ -93,9 +92,6 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const username = req.body.ID;
   let experiment = Experiment.getInstance();
-
-
-
   const groupNumber = (parseInt(username) - 1) % 3 + 1;
 
   let groupName = '';
@@ -145,6 +141,8 @@ app.get('/game', (req, res) => {
   let recommendations = [];
   const experiment = Experiment.getInstance();
   const packetArray = experiment.packetArray.map(x => x);
+  experiment.setCurrentStage();
+  console.log(`now the stage is ${experiment.getCurrentStage()}`)
   
 
   // Define recommendations based on group
@@ -207,7 +205,6 @@ app.get("/scales", (req, res) => {
   let scales = ['/tias', '/sart', '/nasa'];
   shuffleArray(scales);
   req.session.scales = scales;
-  
   let nextScale = scales.pop();
   req.session.currentScale = nextScale;
   res.redirect(nextScale);
@@ -215,9 +212,20 @@ app.get("/scales", (req, res) => {
 
 // handle scales posts
 app.post("/scales", (req, res) => {
-  console.log(req.body);
+  let data = req.body;
+  let experiment = Experiment.getInstance();
+  let category = experiment.getCurrentStage();
+  let firstDataEle = Object.keys(data)[0];
+  let typeOfScale = firstDataEle.slice(0,4);
+  let inputs = Object.values(data);
+  
+  experiment.addScalesData(category, typeOfScale, inputs)
+  console.log(experiment.scalesData);
+  console.log(experiment.trialData)
+  
   
   if (req.session.scales.length === 0) { // check if scales complete
+    experiment.setCurrentStage();
     return res.redirect("/rules");
   }
   let scales = req.session.scales

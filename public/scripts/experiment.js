@@ -16,10 +16,10 @@ class Experiment {
         this.packetArray = this.setPacketArray();
         this.testTrial = [];
         this.trialData = [];
-        this.scalesData = {'preExp' : {},
-                            'midExp' : {},
-                            'postExp' : {}};
-        this.stage = 'begin'
+        this.scalesData = {'preExperiment' : {},
+                            'midExperiment' : {},
+                            'postExperiment' : {}};
+        this.stage = 'test'
 
         Experiment.instance = this;
     }
@@ -45,7 +45,7 @@ class Experiment {
     }
     
     addScalesData(category, scale, data) {
-        this.scalesData[category][scale] = data;
+        this.scalesData[category][scale] = data; 
     }
 
     setPacketArray() {
@@ -72,9 +72,7 @@ class Experiment {
         this.stage = this.getNextStage();
     }
     getNextStage() {
-        if (this.stage === 'begin') {
-            return 'test'
-        } else if (this.stage === 'test') {
+        if (this.stage === 'test') {
             return "preExperiment";
         } else if (this.stage === 'preExperiment') {
             return "trial1";
@@ -87,8 +85,8 @@ class Experiment {
         } else if (this.stage === 'trial3') {
             return "trial4";
         } else if (this.stage === 'trial4') {
-            return "endExperiment";
-        } else if (this.stage === "endExperiment" ) {
+            return "postExperiment";
+        } else if (this.stage === "postExperiment" ) {
            return "debrief";
         } else {
             return "error"
