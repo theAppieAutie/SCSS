@@ -218,11 +218,7 @@ app.post("/scales", (req, res) => {
   let firstDataEle = Object.keys(data)[0];
   let typeOfScale = firstDataEle.slice(0,4);
   let inputs = Object.values(data);
-  
-  experiment.addScalesData(category, typeOfScale, inputs)
-  console.log(experiment.scalesData);
-  console.log(experiment.trialData)
-  
+  experiment.addScalesData(category, typeOfScale, inputs);
   
   if (req.session.scales.length === 0) { // check if scales complete
     experiment.setCurrentStage();
@@ -258,12 +254,21 @@ app.get("/nasa", (req,res) => {
 
 // get debrief view
 app.get("/debrief", (req, res) => {
+  let experiment = Experiment.getInstance();
+  console.log(experiment);
   res.render("debrief.ejs");
 });
 
 // get feedback view
 app.get("/feedback", (req,res) => {
   res.render("feedback.ejs");
+})
+
+app.post("/feedback", (req, res) => {
+  let feedback = req.body;
+  let experiment = Experiment.getInstance();
+  experiment.addFeedback(feedback);
+  return res.redirect("/debrief")
 })
 // Start the server
 app.listen(5050, () => {

@@ -144,9 +144,33 @@
                     <% } %>
                 </div>
             </div>
-            <input type="submit" role="button" value="Submit">
+            <input type="submit" role="button" value="Submit" id="submit">
         </form>
     </section>
-
+    <script>
+        document.getElementById("submit").addEventListener("click", () => {
+            var allItems = document.querySelectorAll('input');
+            let items = [];
+            for (let i = 0; i < allItems.length; i += 7){
+                items.push(allItems[i].name)
+            }
+            items.pop() // inelegant solution to remove the button input
+            let checked = [];
+            for (let i = 0; i < items.length; i++){
+                let itemArray = document.getElementsByName(items[i]);
+                let checkedFlag = false;
+                for (let j = 0; j < itemArray.length; j++) {
+                    if (document.getElementById(itemArray[j].id).checked) {
+                        checkedFlag = true;
+                        console.log("checked flag has changed")
+                    }
+                }
+                if (checkedFlag === false) {
+                    window.alert(`Please respond to question number ${items[i].slice(-2)}`);
+                    event.preventDefault();
+                }
+            }   
+        })
+    </script>
 </body>
 </html>

@@ -47,7 +47,7 @@ const startTrial = () => {
     let selectedDot = null;
   
     const timeForTrial = config.trialLength * 60000;
-    const timePerPacket = timeForTrial / 20;
+    const timePerPacket = timeForTrial / packetArray.length;
   
     // Create and add the central point without click events
     const visualCenterDot = document.createElement('div');

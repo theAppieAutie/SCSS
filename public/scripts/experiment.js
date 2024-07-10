@@ -1,10 +1,7 @@
 // import classes
 
-// import { PacketFactory, getLocationValues } from "./packet.js";
-// import { shuffleArray } from "./utils.js";
-const {PacketFactory, getLocationValues} = require("./packet.js");
-// const { shuffleArray } = require("./utils.js")
 
+const {PacketFactory, getLocationValues} = require("./packet.js");
 
 class Experiment {
     constructor() {
@@ -19,7 +16,8 @@ class Experiment {
         this.scalesData = {'preExperiment' : {},
                             'midExperiment' : {},
                             'postExperiment' : {}};
-        this.stage = 'test'
+        this.stage = 'test';
+        this.feedback;
 
         Experiment.instance = this;
     }
@@ -48,10 +46,14 @@ class Experiment {
         this.scalesData[category][scale] = data; 
     }
 
+    addFeedback(feedback) {
+        this.feedback = feedback;
+    }
+
     setPacketArray() {
         let packets = [];
         let quadrants = ["topLeft", "topRight", "bottomLeft", "bottomRight"];
-        let types = ["hostile", "hostile", "safe", "safe", "neutral", "neutral"];
+        let types = ["neutral"];
 
         for (let q of quadrants) {
             for (let t of types) {
