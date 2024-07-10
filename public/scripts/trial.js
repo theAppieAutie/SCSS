@@ -9,17 +9,35 @@ game.style.maxHeight = "60vh";
 game.style.marginRight = "1vw";
 };
 
-// Apply style adjustments based on the user's group
-// const applyGroupStyles = () => {
-//   if (userGroup === "noAdvisor") {
-//     adjustGameStyles();
-//   }
-//   // Add conditions for other groups if needed
-// };
-
-// Execute `applyGroupStyles` when the page is fully loaded
-// document.addEventListener("DOMContentLoaded", applyGroupStyles);
 document.addEventListener("DOMContentLoaded", adjustGameStyles);
+
+// initiate advisor recommendations and attach to packets
+const numberWrong= Math.round((100 - config.advisorAccuracy) / 100 * packetArray.length);
+let advisorArray = packetArray.map((x) => x.packetType);
+let count = 0;
+while (count < numberWrong) {
+  let index = Math.floor(Math.random() * advisorArray.length);
+  if (advisorArray[index] === packetArray[index].packetType) {
+    
+    switch (advisorArray[index]) {
+      case "hostile":
+        advisorArray[index] = Math.random() < .50 ? "safe" : "neutral";
+        break;
+      case "safe":
+        advisorArray[index] = Math.random() < .50 ? "neutral" : "hostile";
+        break;
+      case "neutral":
+        advisorArray[index] = Math.random() < .50 ? "hostile" : "safe";
+    }
+    count++;
+  }
+}
+
+for (let i = 0; i < packetArray.length; i++) {
+  packetArray[i]["recommendation"] = advisorArray[i];
+  packetArray[i]["acceptedRecommendation"] = false;
+}
+
 
 // Initialize variables and elements
 const gameObj = document.getElementById("game");
@@ -32,8 +50,8 @@ let dotElement = null;
 // const data = JSON.parse(experiment);
 
 
-if (!config.packetInfoOnLeft) {
-panelsElement.style.flexDirection = "row-reverse";
+if (group !== "A") {
+  panelsElement.style.flexDirection = "row-reverse";
 }
 
 // Initialize classification buttons
@@ -44,6 +62,7 @@ document.getElementById("confirmButton").addEventListener("click", () => confirm
 
 // Define the `start` function to initialize the game
 const startTrial = () => {
+  
     let selectedDot = null;
   
     const timeForTrial = config.trialLength * 60000;
@@ -76,6 +95,9 @@ const startTrial = () => {
         // Add click event to update connection info and maintain reference
         dot.addEventListener('click', function() {
           updateConnectionInfo(packet);
+          document.getElementById("accept").addEventListener("click", function() {
+            packet["acceptedRecommendation"] = true;
+          } )
           selectedDotInfo = packet;
           dotElement = this;
           selectDot(this);
@@ -105,6 +127,7 @@ const startTrial = () => {
       document.getElementById('info-portnumber').textContent = `Port Number: ${info.portNumber}`;
       document.getElementById('info-fragmentation').textContent = `Fragmentation: ${info.fragmentation}`;
       document.getElementById('info-classification').textContent = `Classification: ${info.classification}`;
+      document.getElementById('recommendation').textContent = `Recommendation: ${info.recommendation}`;
   
     };
     // End trial
@@ -116,7 +139,7 @@ const endTrial = () => {
   
   let inputs = [];
   for (let [k,v] of packetArray.entries()) {
-   inputs.push(v.classification);
+   inputs.push({user : v.classification, advisor : v.recommendation, accepted : v.acceptedRecommendation});
   }
   handleInput(inputs);
 

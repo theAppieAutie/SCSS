@@ -84,6 +84,18 @@ a, a:hover, ul, li {
   width: 35vw;
 }
 
+form button {
+  color: #18171C;
+  background-color: #D9D9D9;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: inherit;
+  height: 10vh;
+  width: 35vw;
+}
+
 /* Pre-Game Information */
 .info {
   margin: 10vh;
@@ -303,6 +315,10 @@ a, a:hover, ul, li {
   border-radius: 5px;
 }
 
+.form-group {
+  margin-top: 2em;
+  margin-bottom: 2rem;
+}
 
 
 /* Not used yet but a possibility for censoring certain data points - need clarity on when it will be needed before implementation */

@@ -126,7 +126,9 @@
                     <% } %>
                 </div>
             </div>
-            <input type="submit" role="button" value="Submit" id="submit">
+            <div class="d-flex justify-content-center">
+                <button type="submit" id="submit">Submit</button>
+            </div>
         </form>
     </section>
     <script>
@@ -136,8 +138,6 @@
             for (let i = 0; i < allItems.length; i += 7){
                 items.push(allItems[i].name)
             }
-            items.pop() // inelegant solution to remove the button input
-            let checked = [];
             for (let i = 0; i < items.length; i++){
                 let itemArray = document.getElementsByName(items[i]);
                 let checkedFlag = false;

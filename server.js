@@ -92,30 +92,36 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const username = req.body.ID;
   let experiment = Experiment.getInstance();
-  const groupNumber = (parseInt(username) - 1) % 3 + 1;
+  const conditionNumber= parseInt(username) % 3;
+  const groupNumber = parseInt(username) % 2;
+  const censoredInfoNumber = Math.floor(parseInt(username) / 4) % 2;
 
-  let groupName = '';
-  switch (groupNumber) {
+  let condition = '';
+  switch (conditionNumber) {
+    case 0:
+      condition = "noAdvisor";
+      break;
     case 1:
-      groupName = "noAdvisor";
+      condition = "humanAdvisor";
       break;
     case 2:
-      groupName = "humanAdvisor";
-      break;
-    case 3:
-      groupName = "aiAdvisor";
+      condition = "aiAdvisor";
       break;
     default:
-      groupName = "noAdvisor"; // Default to noAdvisor
+      condition = "noAdvisor"; // Default to noAdvisor
   }
 
+  let groupName = groupNumber === 0 ? "A" : 'B';
+  let censoredInfo = censoredInfoNumber === 0 ? 'RIO' : 'SIO';
+
   if (!experiment.participant) {
-    experiment.init(username, groupName);
+    experiment.init(username, condition, groupName, censoredInfo);
   }
+  console.log(experiment);
 
   // Save the group in the user's session
   req.session.username = username;
-  req.session.group = groupName;
+  req.session.condition = condition;
   req.session.experiment = experiment;
 
   // Redirect to the description page after login
@@ -124,6 +130,7 @@ app.post("/login", (req, res) => {
 
 // GET Home: Display home view
 app.get("/description", (req, res) => {
+  
   res.render("description.ejs");
   
 });
@@ -132,39 +139,37 @@ app.get("/description", (req, res) => {
 // GET /game: Render the game page based on user group
 app.get('/game', (req, res) => {
   // Ensure session is defined
-  if (!req.session.group) {
+  if (!req.session.condition) {
     return res.redirect('/');
   }
 
-  // Retrieve user group from the session
-  const group = req.session.group;
-  let recommendations = [];
+  // Retrieve experiment info
   const experiment = Experiment.getInstance();
+  const condition = experiment.condition;
+  const group = experiment.group;
+  const censorship = experiment.censoredInfo;
+  let conditionText = '';
+  
   const packetArray = experiment.packetArray.map(x => x);
   experiment.setCurrentStage();
-  console.log(`now the stage is ${experiment.getCurrentStage()}`)
-  
 
   // Define recommendations based on group
-  switch (group) {
+  switch (condition) {
     case "noAdvisor":
-      recommendations = []; // No recommendations for this group
+      conditionText = "No Advisor"; // No recommendations for this group
       break;
     case "aiAdvisor":
-      recommendations = ["AI-based recommendations."];
-      break;
-    case "computerAdvisor":
-      recommendations = ["Computer-based recommendations."];
+      conditionText = "AI Advisor";
       break;
     case "humanAdvisor":
-      recommendations = ["Human-based recommendations."];
+      conditionText = "Human Advisor";
       break;
     default:
-      recommendations = []; // Default to no recommendations
+      conditionText = ''; // Default to no recommendations
   }
 
   // Pass recommendations to the view
-  res.render('game.ejs', { group, recommendations, packetArray: JSON.stringify(packetArray)});
+  res.render('game.ejs', { conditionText, group, censorship, packetArray: JSON.stringify(packetArray)});
 });
 
 //  handle adding data to Experiment
@@ -172,6 +177,7 @@ app.post("/addTrial", (req, res) => {
   const experiment = Experiment.getInstance();
  
   const inputs = req.body['input'];
+  console.log(inputs);
   const stage = req.session.stage;
   if (stage === 'test') {
     experiment.addTestTrial(inputs);

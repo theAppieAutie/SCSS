@@ -10,6 +10,8 @@ class Experiment {
         }
         this.participant = null;
         this.condition = null;
+        this.group = null;
+        this.censoredInfo = null;
         this.packetArray = this.setPacketArray();
         this.testTrial = [];
         this.trialData = [];
@@ -29,9 +31,11 @@ class Experiment {
         return Experiment.instance;
     }
 
-    init(participant, condition) {
+    init(participant, condition, group, censoredInfo) {
         this.participant = participant;
         this.condition = condition;
+        this.group = group;
+        this.censoredInfo = censoredInfo;
     }
 
     addTestTrial(testTrial) {
