@@ -52,22 +52,43 @@ function getRelevantInformation(type) {
 function getLocationValues(quadrant) {
     let top;
     let left;
+    const horizontalEdge = Math.random() < 0.5;
     switch (quadrant) {
-       case "topLeft":
-            top = Math.floor(Math.random()*51);
-            left = Math.floor(Math.random()*51);
+        case "topLeft":
+            if (horizontalEdge) {
+                top = 0;
+                left = Math.floor(Math.random() * 51);
+            } else {
+                top = Math.floor(Math.random() * 51);
+                left = 0;
+            }
             break;
         case "topRight":
-            top = Math.floor(Math.random()*51);
-            left = Math.floor(Math.random()*50) + 51;
+            if (horizontalEdge) {
+                top = 0;
+                left = Math.floor(Math.random() * 50) + 51;
+            } else {
+                top = Math.floor(Math.random() * 51);
+                left = 100;
+            }
             break;
         case "bottomLeft":
-            top = Math.floor(Math.random()*50) + 51;
-            left = Math.floor(Math.random()*51);
+            if (horizontalEdge) {
+                top = 100;
+                left = Math.floor(Math.random() * 51);
+            } else {
+                top = Math.floor(Math.random() * 50) + 51;
+                left = 0;
+            }
             break;
         case "bottomRight":
-            top = Math.floor(Math.random()*50) + 51;
-            left = Math.floor(Math.random()*50) + 51;
+            if (horizontalEdge) {
+                top = 100;
+                left = Math.floor(Math.random() * 50) + 51;
+            } else {
+                top = Math.floor(Math.random() * 50) + 51;
+                left = 100;
+            }
             break;
         default:
             break;

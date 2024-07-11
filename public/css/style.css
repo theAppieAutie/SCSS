@@ -187,17 +187,17 @@ form button {
   color: #D9D9D9;
 }
 
-#Trusted:hover, #Trusted.active {
+#safe:hover, #safe.active {
   background-color: green;
   color: white;
 }
 
-#Neutral:hover, #Neutral.active {
+#neutral:hover, #neutral.active {
   background-color: yellow;
   color: #18171C;
 }
 
-#Hostile:hover, #Hostile.active {
+#hostile:hover, #hostile.active {
   background-color: red;
   color: #18171C;
 }

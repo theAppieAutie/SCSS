@@ -17,7 +17,6 @@ export const initializeClassificationButtons = () => {
 
 // Set the currently selected classification and update button states
 export const setClassification = (classification) => {
-  console.log(classification)
   // Remove 'active' class from all buttons
   Object.values(classificationButtons).forEach(button => button.classList.remove('active'));
 
