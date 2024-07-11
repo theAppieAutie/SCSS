@@ -20,6 +20,7 @@
     var conditionText = "<%= conditionText %>";
     var group = "<%= group %>";
     var censoredInfo = "<%= censorship %>";
+    var censoredArrayNumber = parseInt('<%= censoredArrayNumber %>');
     
 </script>
 
@@ -48,14 +49,14 @@
             <section class="parameters">
                 <h4>Connection Information:</h4>
                 <div>
+                    <h4 id="info-checksum">Packet Size: No connection selected</h4>
+                    <h4 id="info-time">Connection Time: No connection selected</h4>
                     <h4 id="info-ip">IP Address: No connection selected</h4>
                     <h4 id="info-country">Country: No connection selected</h4>
-                    <h4 id="info-checksum">Packet Size: No connection selected</h4>
-                    <h4 id="info-protocol">Protocol: No connection selected</h4>
-                    <h4 id="info-time">Connection Time: No connection selected</h4>
-                    <h4 id="info-certificates">SSL/TLS Certificates: No connection selected</h4>
                     <h4 id="info-portnumber">Port Number: No connection selected</h4>
+                    <h4 id="info-protocol">Protocol: No connection selected</h4>
                     <h4 id="info-fragmentation">Fragmentation: No connection selected</h4>
+                    <h4 id="info-certificates">SSL/TLS Certificates: No connection selected</h4>
                     <h4 id="info-classification">Classification: Unclassified</h4>
                 </div>
             </section>

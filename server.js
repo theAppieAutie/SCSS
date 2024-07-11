@@ -117,12 +117,14 @@ app.post("/login", (req, res) => {
   if (!experiment.participant) {
     experiment.init(username, condition, groupName, censoredInfo);
   }
-  console.log(experiment);
+  
+  const censoredArrayNumber = Math.floor(Math.random() * 4);
 
   // Save the group in the user's session
   req.session.username = username;
   req.session.condition = condition;
   req.session.experiment = experiment;
+  req.session.censoredArrayNumber = censoredArrayNumber
 
   // Redirect to the description page after login
   res.redirect('/description');
@@ -149,6 +151,7 @@ app.get('/game', (req, res) => {
   const group = experiment.group;
   const censorship = experiment.censoredInfo;
   let conditionText = '';
+  const censoredArrayNumber = req.session.censoredArrayNumber;
   
   const packetArray = experiment.packetArray.map(x => x);
   experiment.setCurrentStage();
@@ -169,7 +172,7 @@ app.get('/game', (req, res) => {
   }
 
   // Pass recommendations to the view
-  res.render('game.ejs', { conditionText, group, censorship, packetArray: JSON.stringify(packetArray)});
+  res.render('game.ejs', { conditionText, group, censorship, censoredArrayNumber, packetArray: JSON.stringify(packetArray)});
 });
 
 //  handle adding data to Experiment

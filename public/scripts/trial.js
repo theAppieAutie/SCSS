@@ -1,6 +1,22 @@
 import { initializeClassificationButtons, confirmClassification } from './classification.js';
 import { config } from "./config.js";
 
+//  object holding censored item list to add blur
+const censoredOptions = {
+  'RIO' : {
+        0 : 'info-portnumber',
+        1 : 'info-protocol',
+        2 : 'info-fragmentation',
+        3 : 'info-certificates'
+  },
+  'SIO' : {
+    0 : 'info-checksum',
+    1 : 'info-time',
+    2 : 'info-ip',
+    3 : 'info-country'
+  }
+}
+
 // Function to change game styles based on the group
 const adjustGameStyles = () => {
 const game = document.getElementById("game");
@@ -49,10 +65,11 @@ let dotElement = null;
 
 // const data = JSON.parse(experiment);
 
-
+// set up trial view
 if (group !== "A") {
   panelsElement.style.flexDirection = "row-reverse";
 }
+document.getElementById(censoredOptions[censoredInfo][censoredArrayNumber]).classList.add("blur");
 
 // Initialize classification buttons
 initializeClassificationButtons();

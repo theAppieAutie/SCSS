@@ -323,5 +323,6 @@ form button {
 
 /* Not used yet but a possibility for censoring certain data points - need clarity on when it will be needed before implementation */
 .blur {
-  filter: blur(1.5rem);
+  /* filter: blur(1.5rem); */
+  background-color: black;
 }
