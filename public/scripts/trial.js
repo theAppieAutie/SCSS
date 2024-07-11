@@ -1,4 +1,4 @@
-import { initializeClassificationButtons, confirmClassification } from './classification.js';
+import { initializeClassificationButtons, confirmClassification} from './classification.js';
 import { config } from "./config.js";
 
 //  object holding censored item list to add blur
@@ -61,15 +61,13 @@ const panelsElement = document.getElementsByClassName("panels")[0];
 let selectedDotInfo = null;
 let dotElement = null;
 
-// const experiment = sessionStorage.getItem('experimentState');
-
-// const data = JSON.parse(experiment);
 
 // set up trial view
 if (group !== "A") {
   panelsElement.style.flexDirection = "row-reverse";
 }
 document.getElementById(censoredOptions[censoredInfo][censoredArrayNumber]).classList.add("blur");
+document.getElementById("condition").textContent = `Condition: ${conditionText}`;
 
 // Initialize classification buttons
 initializeClassificationButtons();
@@ -79,7 +77,6 @@ document.getElementById("confirmButton").addEventListener("click", () => confirm
 
 // Define the `start` function to initialize the game
 const startTrial = () => {
-  
     let selectedDot = null;
   
     const timeForTrial = config.trialLength * 60000;
@@ -112,12 +109,15 @@ const startTrial = () => {
         // Add click event to update connection info and maintain reference
         dot.addEventListener('click', function() {
           updateConnectionInfo(packet);
-          document.getElementById("accept").addEventListener("click", function() {
-            packet["acceptedRecommendation"] = true;
-          } )
+          selectDot(this);
           selectedDotInfo = packet;
           dotElement = this;
-          selectDot(this);
+          document.getElementById("accept").addEventListener("click", function() {
+            packet["acceptedRecommendation"] = true;
+            selectedDotInfo.classification = packet.recommendation;
+            confirmClassification(dotElement, selectedDotInfo, packet.recommendation);
+          } )
+
         });
         await delay(timePerPacket);
         gameObj.removeChild(dot)
@@ -144,7 +144,7 @@ const startTrial = () => {
       document.getElementById('info-portnumber').textContent = `Port Number: ${info.portNumber}`;
       document.getElementById('info-fragmentation').textContent = `Fragmentation: ${info.fragmentation}`;
       document.getElementById('info-classification').textContent = `Classification: ${info.classification}`;
-      document.getElementById('recommendation').textContent = `Recommendation: ${info.recommendation}`;
+      document.getElementById('advice').textContent = `Recommendation: ${info.recommendation}`;
   
     };
     // End trial

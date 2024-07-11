@@ -49,14 +49,14 @@
             <section class="parameters">
                 <h4>Connection Information:</h4>
                 <div>
-                    <h4 id="info-checksum">Packet Size: No connection selected</h4>
-                    <h4 id="info-time">Connection Time: No connection selected</h4>
-                    <h4 id="info-ip">IP Address: No connection selected</h4>
-                    <h4 id="info-country">Country: No connection selected</h4>
-                    <h4 id="info-portnumber">Port Number: No connection selected</h4>
-                    <h4 id="info-protocol">Protocol: No connection selected</h4>
-                    <h4 id="info-fragmentation">Fragmentation: No connection selected</h4>
-                    <h4 id="info-certificates">SSL/TLS Certificates: No connection selected</h4>
+                    <h4 id="info-checksum">Packet Size: Unavailable</h4>
+                    <h4 id="info-time">Connection Time: Unavailable</h4>
+                    <h4 id="info-ip">IP Address: Unavailable</h4>
+                    <h4 id="info-country">Country: Unavailable</h4>
+                    <h4 id="info-portnumber">Port Number: Unavailable</h4>
+                    <h4 id="info-protocol">Protocol: Unavailable</h4>
+                    <h4 id="info-fragmentation">Fragmentation: Unavailable</h4>
+                    <h4 id="info-certificates">Certificates: Unavailable</h4>
                     <h4 id="info-classification">Classification: Unclassified</h4>
                 </div>
             </section>
@@ -65,9 +65,9 @@
             <section class="droneButtons">
                 <h4>Classification:</h4>
                 <div>
-                    <button id="Trusted" type="button">Trusted</button>
-                    <button id="Neutral" type="button">Neutral</button>
-                    <button id="Hostile" type="button">Hostile</button>
+                    <button id="safe" type="button">Safe</button>
+                    <button id="neutral" type="button">Neutral</button>
+                    <button id="hostile" type="button">Hostile</button>
                 </div>
                 <button id="confirmButton" type="button">Confirm</button>
             </section>
@@ -79,10 +79,10 @@
         </section>
 
         <!-- Right Panel (Recommendations) -->
-        <aside id="recommendation" class="d-flex flex-column">
-            <div class="info h-50">
+        <aside id="recommendations">
+            <div class="h-50">
                 <h4 id="condition"></h4>
-                <h5 id="recommendation"></h5>
+                <h5 id="advice"></h5>
             </div>
             <div class="h-50">
                 <button type="submit" id="accept">Accept Recommendation</button>
@@ -93,7 +93,6 @@
 
 
     <!-- Additional Scripts -->
-    <script>document.getElementById("condition").textContent = `Condition: ${conditionText}`;</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
     <script type="module" src="../public/scripts/trial.js"></script>
 </body>

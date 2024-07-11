@@ -3,20 +3,21 @@ let selectedClassification = null;
 
 // Object containing classification button elements
 const classificationButtons = {
-  Trusted: document.getElementById("Trusted"),
-  Neutral: document.getElementById("Neutral"),
-  Hostile: document.getElementById("Hostile")
+  safe: document.getElementById("safe"),
+  neutral: document.getElementById("neutral"),
+  hostile: document.getElementById("hostile")
 };
 
 // Initialize classification buttons with click event listeners
 export const initializeClassificationButtons = () => {
-  classificationButtons.Trusted.addEventListener("click", () => setClassification("Trusted"));
-  classificationButtons.Neutral.addEventListener("click", () => setClassification("Neutral"));
-  classificationButtons.Hostile.addEventListener("click", () => setClassification("Hostile"));
+  classificationButtons.safe.addEventListener("click", () => setClassification("safe"));
+  classificationButtons.neutral.addEventListener("click", () => setClassification("neutral"));
+  classificationButtons.hostile.addEventListener("click", () => setClassification("hostile"));
 };
 
 // Set the currently selected classification and update button states
 export const setClassification = (classification) => {
+  console.log(classification)
   // Remove 'active' class from all buttons
   Object.values(classificationButtons).forEach(button => button.classList.remove('active'));
 
@@ -26,23 +27,24 @@ export const setClassification = (classification) => {
 };
 
 // Confirm the classification for the selected point
-export const confirmClassification = (dotElement, selectedDotInfo) => {
-  if (selectedClassification && selectedDotInfo) {
-    // Assign the selected classification to the data object
-    selectedDotInfo.classification = selectedClassification;
+export const confirmClassification = (dotElement, selectedDotInfo, advisor=false) => {
+
+  selectedClassification = advisor ? selectedDotInfo.recommendation : selectedClassification
+
+  if ((selectedClassification && selectedDotInfo)) {
 
     // Update the corresponding dot element's class based on the classification
     
     dotElement.classList.remove('trusted', 'neutral', 'hostile');
 
     switch (selectedClassification) {
-      case "Trusted":
+      case "safe":
         dotElement.classList.add('trusted');
         break;
-      case "Neutral":
+      case "neutral":
         dotElement.classList.add('neutral');
         break;
-      case "Hostile":
+      case "hostile":
         dotElement.classList.add('hostile');
         break;
     }
@@ -51,7 +53,7 @@ export const confirmClassification = (dotElement, selectedDotInfo) => {
     document.getElementById('info-classification').textContent = `Classification: ${selectedClassification}`;
     
     // update packet data
-    selectedDotInfo.data.classification = selectedClassification;
+    selectedDotInfo.classification = selectedClassification;
   } else {
     console.log("No classification selected.");
   }
