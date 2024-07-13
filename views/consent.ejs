@@ -44,79 +44,81 @@
         <p>or the School of Psychology Research Ethics committee (psychethics@cardiff.ac.uk). </p>
         <p>Please provide a tick below as an electronic signature</p>
         <section class="consent">
-            <input type="checkbox" class="form-control" id="consent-checkbox">
-            <label for="consent-checkbox" class="form-text">I, consent to participate in the study conducted by Mordecai Otter of Psychology, Cardiff University with the supervision of Prof. Phillip Morgan and Prof. Rob Honey.</label>
+            <div class="d-flex w-100 justify-content-between border border-2 border-warning">
+                <input type="checkbox" class="form-check-input" id="consent-checkbox" name="consent-checkbox">
+                <label for="consent-checkbox" class="form-check-label">I, consent to participate in the study conducted by Mordecai Otter of Psychology, Cardiff University with the supervision of Prof. Phillip Morgan and Prof. Rob Honey.</label>
+            </div>
             <form>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I confirm that I have read the information sheet on the previous page. </p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I confirm that I have understood the information sheet for the above research project and that I have had the opportunity to ask questions and that these have been answered satisfactorily.</p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I understand that my participation is voluntary, and I am free to withdraw at any time without giving a reason and without any adverse consequences (e.g. to medical care or legal rights, if relevant).  </p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I consent to the processing of my personal information such as my name and course for the purposes explained to me.  I understand that such information will be held in accordance with all applicable data protection legislation and in strict confidence, unless disclosure is required by law or professional obligation.</p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I understand who will have access to my personal information, how the data will be stored and what will happen to the data at the end of the research project. </p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I understand that after the research project, anonymised data may be made publicly available via a data repository and may be used for purposes not related to this research project. I understand that it will not be possible to identify me from this data that is seen and used by other researchers, for ethically approved research projects, on the understanding that confidentiality will be maintained.</p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I consent to having my eyes tracked for the purposes of the research project and I understand how it will be used in the research.</p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I understand how the findings and results of the research project will be written up and published.</p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-10">
                         <p>I agree to take part in this research project.</p>
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="consent">
                     </div>
                 </div>
             </form>
@@ -127,6 +129,28 @@
 </body>
 <script>
     document.getElementById("proceedToLogin").addEventListener("click", () => {
+        if (!document.getElementById('consent-checkbox').checked) {
+            document.getElementById('consent-checkbox').parentElement.classList.add("border-danger")
+            event.preventDefault();
+            window.alert("Please provide an electronic signature by clicking the checkbox")
+            return
+        }
+        document.getElementById('consent-checkbox').parentElement.classList.remove("border")
+        var initials = document.getElementsByName('consent');
+        for (let item of initials) {
+            if (item.value === '') {
+                item.classList.add("border");
+                item.classList.add("border-2");
+                item.classList.add("border-danger");
+                event.preventDefault();
+                window.alert("Please initial each box to confirm you provide consent")
+                return
+            }
+            item.classList.remove("border");
+            item.classList.remove("border-2");
+            item.classList.remove("border-danger");
+        }
+        
         window.location.href = "/login";
     })
 </script>

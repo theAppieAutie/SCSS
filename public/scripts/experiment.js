@@ -57,8 +57,8 @@ class Experiment {
     setPacketArray() {
         let packets = [];
         let quadrants = ["topLeft", "topRight", "bottomLeft", "bottomRight"];
-        let types = ["hostile"];
-// "neutral", "neutral", "safe", "safe", "hostile", 
+        let types = ["neutral", "neutral", "safe", "safe", "hostile","hostile"];
+ 
         for (let q of quadrants) {
             for (let t of types) {
             let packet = PacketFactory(t);

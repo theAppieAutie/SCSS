@@ -69,6 +69,10 @@ if (group !== "A") {
 document.getElementById(censoredOptions[censoredInfo][censoredArrayNumber]).classList.add("blur");
 document.getElementById("condition").textContent = `Condition: ${conditionText}`;
 
+if (conditionText === "No Advisor") {
+  document.getElementById("accept").classList.add("hide");
+}
+
 // Initialize classification buttons
 initializeClassificationButtons();
 
@@ -80,7 +84,8 @@ const startTrial = () => {
     let selectedDot = null;
   
     const timeForTrial = config.trialLength * 60000;
-    const timePerPacket = timeForTrial / packetArray.length;
+    const timePerPacket = (config.packetTimeOnScreen * 1000) * packetArray.length <= timeForTrial ? config.packetTimeOnScreen * 1000 : timeForTrial / packetArray.length; 
+
   
     // Create and add the central point without click events
     const visualCenterDot = document.createElement('div');
@@ -119,9 +124,14 @@ const startTrial = () => {
           } )
 
         });
-        await delay(timePerPacket);
-        gameObj.removeChild(dot)
+        setTimeout(() => {
+          dot.parentNode.removeChild(dot);
+        }, timePerPacket);
+        await delay(timePerPacket / 2);
+       
       }
+      // end trial after last packet has finished
+      setTimeout(endTrial, timePerPacket)
   }
   
     // Function to select a single dot
@@ -147,8 +157,7 @@ const startTrial = () => {
       document.getElementById('advice').textContent = `Recommendation: ${info.recommendation}`;
   
     };
-    // End trial
-    setTimeout(endTrial, timeForTrial + timePerPacket);
+ 
   };
   
 // handle end of the trial

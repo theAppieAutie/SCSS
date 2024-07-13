@@ -96,6 +96,10 @@ form button {
   width: 35vw;
 }
 
+form {
+  margin: 1rem;
+}
+
 /* Pre-Game Information */
 .info {
   margin: 10vh;
@@ -335,6 +339,11 @@ form button {
 
 /* implement censoring of certain data */
 .blur {
-  /* filter: blur(1.5rem); */
+  filter: blur(1.5rem);
   background-color: black;
+}
+
+/* hide accept advisor button if no advisor */
+.hide {
+  visibility:hidden;
 }
