@@ -5,14 +5,11 @@ const {PacketFactory, getLocationValues} = require("./packet.js");
 
 class Experiment {
     constructor() {
-        if (Experiment.instance) {
-            return Experiment.instance;
-        }
         this.participant = null;
         this.condition = null;
         this.group = null;
         this.censoredInfo = null;
-        this.packetArray = this.setPacketArray();
+        this.packetArray = null;
         this.testTrial = [];
         this.trialData = [];
         this.scalesData = {'preExperiment' : {},
@@ -21,14 +18,7 @@ class Experiment {
         this.stage = 'test';
         this.feedback;
 
-        Experiment.instance = this;
-    }
-
-    static getInstance() {
-        if (!Experiment.instance) {
-            Experiment.instance = new Experiment();
-        }
-        return Experiment.instance;
+        
     }
 
     init(participant, condition, group, censoredInfo) {
@@ -36,6 +26,7 @@ class Experiment {
         this.condition = condition;
         this.group = group;
         this.censoredInfo = censoredInfo;
+        this.packetArray = this.setPacketArray();
     }
 
     addTestTrial(testTrial) {

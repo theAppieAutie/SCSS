@@ -10,14 +10,13 @@ const Experiment = require("./public/scripts/experiment.js");
 const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
-const { v4: uuidv4 } = require("uuid");
+// const { v4: uuidv4 } = require("uuid");
 const flash = require("express-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 
-// User Configuration
-let users = [];
+
 
 // Configure views and static files
 app.set("views", path.join(__dirname, "./views"));
@@ -34,10 +33,34 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(flash());
 app.use(methodOverride('_method'));
 
+// restore experiment object
+const restoreExperiment = (req,res,next) => {
+  console.log("into the pre route check");
+  if (req.session.experiment) {
+    req.experiment = new Experiment();
+    Object.assign(req.experiment, req.session.experiment);
+    
+  } else {
+    req.experiment = new Experiment();
+    
+    
+  }
+  console.log(req.experiment);
+  next();
+}
+
+// save experiment instance to session
+const saveExperiment = (req,res,next) => {
+  console.log("post route saving")
+  req.session.experiment = req.experiment;
+  next();
+}
+
 // check for routing purposes experiment state
 const checkStageOfExperiment = (req, res, next) => {
-  const experiment = Experiment.getInstance()
-  const stage = experiment.getCurrentStage();
+  
+  const stage = req.experiment.getCurrentStage();
+  console.log(stage);
   req.session.stage = stage;
   if (stage.includes('Experiment')) {
     res.redirect('/scales');
@@ -67,6 +90,9 @@ app.use(
   })
 );
 
+
+// pre route 
+app.use(restoreExperiment);
 // Routes
 
 // GET information view
@@ -91,7 +117,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   const username = req.body.ID;
-  let experiment = Experiment.getInstance();
+ 
   const conditionNumber= parseInt(username) % 3;
   const groupNumber = parseInt(username) % 2;
   const censoredInfoNumber = Math.floor(parseInt(username) / 4) % 2;
@@ -114,9 +140,9 @@ app.post("/login", (req, res) => {
   let groupName = groupNumber === 0 ? "A" : 'B';
   let censoredInfo = censoredInfoNumber === 0 ? 'RIO' : 'SIO';
 
-  if (!experiment.participant) {
-    experiment.init(username, condition, groupName, censoredInfo);
-  }
+  let experiment = new Experiment();
+  experiment.init(username, condition, groupName, censoredInfo);
+  
   
   const censoredArrayNumber = Math.floor(Math.random() * 4);
 
@@ -146,15 +172,15 @@ app.get('/game', (req, res) => {
   }
 
   // Retrieve experiment info
-  const experiment = Experiment.getInstance();
-  const condition = experiment.condition;
-  const group = experiment.group;
-  const censorship = experiment.censoredInfo;
+  
+  const condition = req.experiment.condition;
+  const group = req.experiment.group;
+  const censorship = req.experiment.censoredInfo;
   let conditionText = '';
   const censoredArrayNumber = req.session.censoredArrayNumber;
   
-  const packetArray = experiment.packetArray.map(x => x);
-  experiment.setCurrentStage();
+  const packetArray = req.experiment.packetArray.map(x => x);
+  req.experiment.setCurrentStage();
 
   // Define recommendations based on group
   switch (condition) {
@@ -177,18 +203,21 @@ app.get('/game', (req, res) => {
 
 //  handle adding data to Experiment
 app.post("/addTrial", (req, res) => {
-  const experiment = Experiment.getInstance();
+  
  
   const inputs = req.body['input'];
-  console.log(inputs);
+  console.log(inputs)
+ 
   const stage = req.session.stage;
   if (stage === 'test') {
-    experiment.addTestTrial(inputs);
+    req.experiment.addTestTrial(inputs);
   } else {
-    experiment.addTrialInputToTrialData(inputs);
+    req.experiment.addTrialInputToTrialData(inputs);
   }
-
-  return res.send().status(200);
+  req.experiment.setCurrentStage();
+  saveExperiment(req, res, () => {
+    res.sendStatus(200);
+  });
 })
 
 
@@ -222,22 +251,25 @@ app.get("/scales", (req, res) => {
 // handle scales posts
 app.post("/scales", (req, res) => {
   let data = req.body;
-  let experiment = Experiment.getInstance();
-  let category = experiment.getCurrentStage();
+  
+  let category = req.experiment.getCurrentStage();
   let firstDataEle = Object.keys(data)[0];
   let typeOfScale = firstDataEle.slice(0,4);
   let inputs = Object.values(data);
-  experiment.addScalesData(category, typeOfScale, inputs);
+  req.experiment.addScalesData(category, typeOfScale, inputs);
   
   if (req.session.scales.length === 0) { // check if scales complete
-    experiment.setCurrentStage();
-    return res.redirect("/rules");
+    req.experiment.setCurrentStage();
+    saveExperiment(req, res, () => {
+      res.redirect("/rules");
+    });
   }
   let scales = req.session.scales
   let nextScale = scales.pop();
   req.session.currentScale = nextScale;
-  res.redirect(nextScale);
-
+  saveExperiment(req, res, () => {
+    res.redirect(nextScale);
+  });
 })
 
 
@@ -263,8 +295,8 @@ app.get("/nasa", (req,res) => {
 
 // get debrief view
 app.get("/debrief", (req, res) => {
-  let experiment = Experiment.getInstance();
-  console.log(experiment);
+  
+  console.log(req.experiment);
   res.render("debrief.ejs");
 });
 
@@ -275,10 +307,16 @@ app.get("/feedback", (req,res) => {
 
 app.post("/feedback", (req, res) => {
   let feedback = req.body;
-  let experiment = Experiment.getInstance();
-  experiment.addFeedback(feedback);
-  return res.redirect("/debrief")
+  
+  req.experiment.addFeedback(feedback);
+  saveExperiment(req, res, () => {
+    res.redirect("/debrief")
+  });
 })
+
+// post route
+app.use(saveExperiment);
+
 // Start the server
 app.listen(5050, () => {
   console.log(`Server running at http://localhost:5050`);
