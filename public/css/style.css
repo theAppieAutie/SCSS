@@ -254,8 +254,8 @@ form {
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   position: absolute;
   background-color: aqua;
@@ -281,8 +281,8 @@ form {
 }
 
 .center-dot {
-  width: 15px;
-  height: 15px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   position: absolute;
   left: 50%;
@@ -346,4 +346,8 @@ form {
 /* hide accept advisor button if no advisor */
 .hide {
   visibility:hidden;
+}
+
+#condition {
+  font-weight: bolder;
 }

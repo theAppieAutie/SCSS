@@ -128,6 +128,10 @@
     </section>
 </body>
 <script>
+    var box = document.getElementById("consent-checkbox");
+    box.addEventListener("click", () => {
+        box.checked ? box.parentElement.classList.remove("border-warning") : box.parentElement.classList.add("border-warning");
+    })
     document.getElementById("proceedToLogin").addEventListener("click", () => {
         if (!document.getElementById('consent-checkbox').checked) {
             document.getElementById('consent-checkbox').parentElement.classList.add("border-danger")

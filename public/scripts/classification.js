@@ -26,10 +26,13 @@ export const setClassification = (classification) => {
 };
 
 // Confirm the classification for the selected point
-export const confirmClassification = (dotElement, selectedDotInfo, advisor=false) => {
+export const confirmClassification = (dotElement, selectedDotInfo, advice=false) => {
 
-  selectedClassification = advisor ? selectedDotInfo.recommendation : selectedClassification
+  
 
+  selectedClassification = advice ? selectedDotInfo.recommendation : selectedClassification;
+  classificationButtons[selectedClassification].classList.remove('active');
+  
   if ((selectedClassification && selectedDotInfo)) {
 
     // Update the corresponding dot element's class based on the classification

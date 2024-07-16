@@ -71,6 +71,7 @@ document.getElementById("condition").textContent = `Condition: ${conditionText}`
 
 if (conditionText === "No Advisor") {
   document.getElementById("accept").classList.add("hide");
+  document.getElementById("advice").classList.add("hide");
 }
 
 // Initialize classification buttons
@@ -120,7 +121,7 @@ const startTrial = () => {
           document.getElementById("accept").addEventListener("click", function() {
             packet["acceptedRecommendation"] = true;
             selectedDotInfo.classification = packet.recommendation;
-            confirmClassification(dotElement, selectedDotInfo, packet.recommendation);
+            confirmClassification(dotElement, selectedDotInfo, packet.acceptedRecommendation);
           } )
 
         });
