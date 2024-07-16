@@ -1,14 +1,13 @@
 # 📡 SCSS (Security Control Simulation System)
 
 ## 📄 About
-This program simulates four different types of advisory systems to evaluate how people respond to different types of advice in cyber defense tasks. Participants are randomly assigned to one of the following four experimental conditions:
+This program simulates three different types of advisory systems to evaluate how people respond to different types of advice in cyber defense tasks. Participants are randomly assigned to one of the following four experimental conditions:
 
 1. **No Advisor (Control)**
 2. **AI Advisor**
-3. **Computer Advisor**
-4. **Human Expert Advisor**
+3. **Human Advisor**
 
-Participants are tasked as cyber defense experts to protect a network by classifying incoming requests as "Trusted," "Neutral," or "Hostile" based on provided rules. Misclassifications may lead to a security breach or prevent staff from accessing essential data.
+Participants are tasked as cyber defense experts to protect a network by classifying incoming requests as "Safe," "Neutral," or "Hostile" based on provided rules. Misclassifications may lead to a security breach or prevent staff from accessing essential data.
 
 The system utilizes a Battlespace Management Task (Hodgetts et al., 2015), adapted to fit the terminology of a cyber defense task. The network is at the center of the radar screen, surrounded by incoming internet traffic represented by radar dots. Participants must click on these dots to view their parameters (e.g., country of origin, packet size) and classify them accordingly.
 
@@ -23,7 +22,7 @@ The objective of this experiment is to evaluate how people respond to advice fro
 
 ## 🔧 System Features
 
-1. **Four Advisory Systems**:  
+1. **Three Advisory Systems**:  
    Simulates four different types of advisors with varying advisory panels and recommendations.
 
 2. **Radar Display**:  
@@ -67,3 +66,6 @@ export $(cat .env | xargs)
 2. 🌐 Open a browser and go to the configured port in `server.js`.
 
 3. 🧭 Follow the on-screen instructions to engage with the simulation and answer the questionnaires.
+
+## This version
+This version has been adapted to fulfill the requirements of the current experiment.
