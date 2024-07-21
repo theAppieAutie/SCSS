@@ -295,10 +295,13 @@ app.get("/nasa", (req,res) => {
 
 // get debrief view
 app.get("/debrief", (req, res) => {
-  
-  console.log(req.experiment);
   res.render("debrief.ejs");
 });
+
+app.post("/debrief", (req, res) => {
+  console.log(req.session.experiment);
+  res.render("thanks.ejs");
+})
 
 // get feedback view
 app.get("/feedback", (req,res) => {
