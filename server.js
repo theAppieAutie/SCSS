@@ -35,7 +35,6 @@ app.use(methodOverride('_method'));
 
 // restore experiment object
 const restoreExperiment = (req,res,next) => {
-  console.log("into the pre route check");
   if (req.session.experiment) {
     req.experiment = new Experiment();
     Object.assign(req.experiment, req.session.experiment);
@@ -45,13 +44,11 @@ const restoreExperiment = (req,res,next) => {
     
     
   }
-  console.log(req.experiment);
   next();
 }
 
 // save experiment instance to session
 const saveExperiment = (req,res,next) => {
-  console.log("post route saving")
   req.session.experiment = req.experiment;
   next();
 }
@@ -60,7 +57,6 @@ const saveExperiment = (req,res,next) => {
 const checkStageOfExperiment = (req, res, next) => {
   
   const stage = req.experiment.getCurrentStage();
-  console.log(stage);
   req.session.stage = stage;
   if (stage.includes('Experiment')) {
     res.redirect('/scales');
@@ -144,7 +140,7 @@ app.post("/login", (req, res) => {
   experiment.init(username, condition, groupName, censoredInfo);
   
   
-  const censoredArrayNumber = Math.floor(Math.random() * 4);
+  const censoredArrayNumber = censoredInfo === 'RIO' ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * 4); // made a check here to account for the differing lengths of RIO and SIO conditions. RIO condition has 3 items and SIO still has 4 
 
   // Save the group in the user's session
   req.session.username = username;
@@ -240,7 +236,10 @@ app.post("/testScenario", (req, res) => {
 
 //  get scales views
 app.get("/scales", (req, res) => {
-  let scales = ['/tias', '/sart', '/nasa'];
+  let scales = ['/sart', '/nasa'];
+  if (req.session.condition !== 'noAdvisor') {
+    scales.push('/tias');
+  }
   shuffleArray(scales);
   req.session.scales = scales;
   let nextScale = scales.pop();
@@ -263,13 +262,14 @@ app.post("/scales", (req, res) => {
     saveExperiment(req, res, () => {
       res.redirect("/rules");
     });
+  } else {
+    let scales = req.session.scales
+    let nextScale = scales.pop();
+    req.session.currentScale = nextScale;
+    saveExperiment(req, res, () => {
+      res.redirect(nextScale);
+    });
   }
-  let scales = req.session.scales
-  let nextScale = scales.pop();
-  req.session.currentScale = nextScale;
-  saveExperiment(req, res, () => {
-    res.redirect(nextScale);
-  });
 })
 
 

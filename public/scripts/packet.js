@@ -18,12 +18,12 @@ function PacketFactory(type) {
     return packet;
 } 
 
-// create relevant information according to the type of packet and return the object
+// create relevant information (RIO - group) according to the type of packet and return the object
 function getRelevantInformation(type) {
+    // When adding fourth RIO data add to this object
     let values = {
         portNumber : {safe: 80, hostile: 4444},
         protocol : {safe: 'HTTPS', hostile: 'ICMP'},
-        fragmentation : {safe: 'No', hostile: 'Yes'},
         certificates : {safe: 'Valid', hostile: 'Expired'}
     };
     let keys = Object.keys(values);

@@ -23,17 +23,17 @@ export const setClassification = (classification) => {
   // Set the new classification and add 'active' class to the selected button
   selectedClassification = classification;
   classificationButtons[classification].classList.add('active');
+
 };
 
 // Confirm the classification for the selected point
-export const confirmClassification = (dotElement, selectedDotInfo, advice=false) => {
+export const confirmClassification = (dotElement, selectedDotInfo, classification) => {
 
-  
+  setClassification(classification);
 
-  selectedClassification = advice ? selectedDotInfo.recommendation : selectedClassification;
-  classificationButtons[selectedClassification].classList.remove('active');
+  classificationButtons[classification].classList.remove('active');
   
-  if ((selectedClassification && selectedDotInfo)) {
+  if ((classification && selectedDotInfo)) {
 
     // Update the corresponding dot element's class based on the classification
     

@@ -6,8 +6,7 @@ const censoredOptions = {
   'RIO' : {
         0 : 'info-portnumber',
         1 : 'info-protocol',
-        2 : 'info-fragmentation',
-        3 : 'info-certificates'
+        2 : 'info-certificates'
   },
   'SIO' : {
     0 : 'info-checksum',
@@ -66,7 +65,9 @@ let dotElement = null;
 if (group !== "A") {
   panelsElement.style.flexDirection = "row-reverse";
 }
-document.getElementById(censoredOptions[censoredInfo][censoredArrayNumber]).classList.add("blur");
+if (config.censoring) {
+  document.getElementById(censoredOptions[censoredInfo][censoredArrayNumber]).classList.add("blur");
+}
 document.getElementById("condition").textContent = `Condition: ${conditionText}`;
 
 if (conditionText === "No Advisor") {
@@ -78,7 +79,9 @@ if (conditionText === "No Advisor") {
 initializeClassificationButtons();
 
 // Attach confirmation event
-document.getElementById("confirmButton").addEventListener("click", () => confirmClassification(dotElement, selectedDotInfo));
+document.getElementById("safe").addEventListener("click", () => confirmClassification(dotElement, selectedDotInfo, "safe"));
+document.getElementById("neutral").addEventListener("click", () => confirmClassification(dotElement, selectedDotInfo, "neutral"));
+document.getElementById("hostile").addEventListener("click", () => confirmClassification(dotElement, selectedDotInfo, "hostile"));
 
 // Define the `start` function to initialize the game
 const startTrial = () => {
@@ -120,8 +123,8 @@ const startTrial = () => {
           dotElement = this;
           document.getElementById("accept").addEventListener("click", function() {
             packet["acceptedRecommendation"] = true;
-            selectedDotInfo.classification = packet.recommendation;
-            confirmClassification(dotElement, selectedDotInfo, packet.acceptedRecommendation);
+            // selectedDotInfo.classification = packet.recommendation;
+            confirmClassification(dotElement, selectedDotInfo, packet.recommendation);
           } )
 
         });
@@ -153,7 +156,6 @@ const startTrial = () => {
       document.getElementById('info-time').textContent = `Connection Time: ${info.time}`;
       document.getElementById('info-certificates').textContent = `Certificates: ${info.certificates}`;
       document.getElementById('info-portnumber').textContent = `Port Number: ${info.portNumber}`;
-      document.getElementById('info-fragmentation').textContent = `Fragmentation: ${info.fragmentation}`;
       document.getElementById('info-classification').textContent = `Classification: ${info.classification}`;
       document.getElementById('advice').textContent = `Recommendation: ${info.recommendation}`;
   
