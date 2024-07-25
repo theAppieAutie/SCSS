@@ -48,7 +48,7 @@
                 <input type="checkbox" class="form-check-input" id="consent-checkbox" name="consent-checkbox">
                 <label for="consent-checkbox" class="form-check-label">I, consent to participate in the study conducted by Mordecai Otter of Psychology, Cardiff University with the supervision of Prof. Phillip Morgan and Prof. Rob Honey.</label>
             </div>
-            <form>
+            <form action="/login" method="POST" id="consent-form">
                 <div class="row">
                     <div class="col-10">
                         <p>I confirm that I have read the information sheet on the previous page. </p>
@@ -154,8 +154,8 @@
             item.classList.remove("border-2");
             item.classList.remove("border-danger");
         }
-        
-        window.location.href = "/login";
+        const form = document.getElementById("consent-form")
+        form.submit();
     })
 </script>
 </html>

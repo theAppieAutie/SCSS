@@ -36,6 +36,10 @@ class Experiment {
     addTrialInputToTrialData(trialInput) {
         this.trialData.push(trialInput);
     }
+
+    getTrialDataArrayLength() {
+        return this.trialData.length;
+    }
     
     addScalesData(category, scale, data) {
         this.scalesData[category][scale] = data; 

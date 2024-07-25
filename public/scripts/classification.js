@@ -56,6 +56,7 @@ export const confirmClassification = (dotElement, selectedDotInfo, classificatio
     
     // update packet data
     selectedDotInfo.classification = selectedClassification;
+    selectedDotInfo['inputTime'] = new Date().toISOString();
   } else {
     console.log("No classification selected.");
   }

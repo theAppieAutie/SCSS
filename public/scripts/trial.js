@@ -49,7 +49,7 @@ while (count < numberWrong) {
 }
 
 for (let i = 0; i < packetArray.length; i++) {
-  packetArray[i]["recommendation"] = advisorArray[i];
+  conditionText === "No Advisor" ? packetArray[i]["recommendation"] = "" : packetArray[i]["recommendation"] = advisorArray[i];
   packetArray[i]["acceptedRecommendation"] = false;
 }
 
@@ -123,7 +123,6 @@ const startTrial = () => {
           dotElement = this;
           document.getElementById("accept").addEventListener("click", function() {
             packet["acceptedRecommendation"] = true;
-            // selectedDotInfo.classification = packet.recommendation;
             confirmClassification(dotElement, selectedDotInfo, packet.recommendation);
           } )
 
@@ -168,7 +167,7 @@ const endTrial = () => {
   
   let inputs = [];
   for (let [k,v] of packetArray.entries()) {
-   inputs.push({user : v.classification, advisor : v.recommendation, accepted : v.acceptedRecommendation});
+   inputs.push({user : v.classification, advisor : v.recommendation, accepted : v.acceptedRecommendation, time : v.inputTime});
   }
   handleInput(inputs);
 

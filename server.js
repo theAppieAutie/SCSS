@@ -15,6 +15,8 @@ const flash = require("express-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
+const { Pool } = require('pg');
+const { config } = require("dotenv");
 
 
 
@@ -26,6 +28,96 @@ app.set("view-engine", "ejs");
 app.use("/public", express.static(path.join(__dirname, "/public")));
 app.use(express.static(path.join(__dirname, "/public")));
 
+// Set up connection to DB and CRUD ops
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+});
+
+pool.connect()
+  .then(() => console.log('Connected to PostgreSQL'))
+  .catch(err => console.error("Connection error", err.stack));
+
+const insertParticipant = async (username, condition, groupNumber, censoredInfo) => {
+  const client = await pool.connect();
+  try {
+    const query = 'INSERT INTO participants (condition, group_number, censorship_group, experiment_start_time) VALUES ($1, $2, $3, $4) RETURNING participant_id;';
+    const time = new Date().toISOString();
+    const values = [condition, groupNumber, censoredInfo, time];
+    const result = await client.query(query, values);
+    // return result.rows[0].participant_id;
+  } finally {
+    client.release();
+  }
+  
+}
+
+const getNextId = async () => {
+  const client = await pool.connect();
+  try {
+    const query = 'SELECT MAX(participant_id) AS max_id FROM participants;'
+    const result = await client.query(query);
+    const maxId = result.rows[0].max_id;
+    return maxId !== null ? Number(maxId) + 1 : 1;
+  } finally {
+    client.release();
+  }
+  
+};
+
+const insertTrial = async (participant, type, number, start, end) => {
+  const client = await pool.connect();
+  try {
+    const query = 'INSERT INTO trials (participant_id, trial_type, trial_number, start_time, end_time) VALUES ($1, $2, $3, $4, $5) RETURNING trial_id;';
+    const values = [participant, type, number, start, end];
+    const result = await client.query(query, values);
+    return result.rows[0].trial_id;
+  } finally {
+    client.release();
+  }
+}
+
+const insertPacket = async (trial, user, advisor, accepted, time) => {
+  const client = await pool.connect();
+  try {
+    const query = 'INSERT INTO packets (trial_id, user_input, advisor_recommendation, accepted, classified_time) VALUES ($1, $2, $3, $4, $5);';
+    const values = [trial, user, advisor, accepted, time];
+    const result = await client.query(query, values);
+    // return result.rows[0].trial_id;
+  } catch (err) {
+    console.error("coulnt add packet input", err.stack); 
+  } finally {
+    client.release();
+  }
+}
+
+const insertScale = async (participant, type, phase) => {
+  const client = await pool.connect();
+  try {
+    const query = 'INSERT INTO scales (participant_id, scale_type, scale_phase) VALUES ($1, $2, $3) RETURNING scale_id;';
+    const values = [participant, type, phase];
+    const result = await client.query(query, values);
+    return result.rows[0].scale_id;
+  } finally {
+    client.release();
+  }
+}
+
+const insertItem = async (itemNumber, scale, value) => {
+  const client = await pool.connect();
+  try {
+    const query = 'INSERT INTO items (item_id, scale_id, item_value) VALUES ($1, $2, $3);';
+    const values = [itemNumber, scale, value];
+    const result = await client.query(query, values);
+  } finally {
+    client.release();
+  }
+}
+
+
 // Middleware and helpers
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -35,6 +127,7 @@ app.use(methodOverride('_method'));
 
 // restore experiment object
 const restoreExperiment = (req,res,next) => {
+  
   if (req.session.experiment) {
     req.experiment = new Experiment();
     Object.assign(req.experiment, req.session.experiment);
@@ -44,11 +137,13 @@ const restoreExperiment = (req,res,next) => {
     
     
   }
+  
   next();
 }
 
 // save experiment instance to session
 const saveExperiment = (req,res,next) => {
+  
   req.session.experiment = req.experiment;
   next();
 }
@@ -57,6 +152,7 @@ const saveExperiment = (req,res,next) => {
 const checkStageOfExperiment = (req, res, next) => {
   
   const stage = req.experiment.getCurrentStage();
+  
   req.session.stage = stage;
   if (stage.includes('Experiment')) {
     res.redirect('/scales');
@@ -105,18 +201,13 @@ app.post("/consent", (req,res) => {
   res.redirect("/login");
 } )
 
-// Login route
-app.get("/login", (req, res) => {
-  res.render("login.ejs");
-});
+// create participant
+app.post("/login", async (req, res) => {
 
-
-app.post("/login", (req, res) => {
-  const username = req.body.ID;
- 
-  const conditionNumber= parseInt(username) % 3;
-  const groupNumber = parseInt(username) % 2;
-  const censoredInfoNumber = Math.floor(parseInt(username) / 4) % 2;
+  const participantId = await getNextId();
+  const conditionNumber= participantId % 3;
+  const groupNumber = parseInt(participantId) % 2;
+  const censoredInfoNumber = Math.floor(participantId / 4) % 2;
 
   let condition = '';
   switch (conditionNumber) {
@@ -137,16 +228,18 @@ app.post("/login", (req, res) => {
   let censoredInfo = censoredInfoNumber === 0 ? 'RIO' : 'SIO';
 
   let experiment = new Experiment();
-  experiment.init(username, condition, groupName, censoredInfo);
+  experiment.init(participantId, condition, groupName, censoredInfo);
   
   
   const censoredArrayNumber = censoredInfo === 'RIO' ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * 4); // made a check here to account for the differing lengths of RIO and SIO conditions. RIO condition has 3 items and SIO still has 4 
 
   // Save the group in the user's session
-  req.session.username = username;
+  req.session.username = participantId;
   req.session.condition = condition;
   req.session.experiment = experiment;
-  req.session.censoredArrayNumber = censoredArrayNumber
+  req.session.censoredArrayNumber = censoredArrayNumber;
+
+  insertParticipant(participantId, condition, groupNumber, censoredInfo)
 
   // Redirect to the description page after login
   res.redirect('/description');
@@ -174,6 +267,7 @@ app.get('/game', (req, res) => {
   const censorship = req.experiment.censoredInfo;
   let conditionText = '';
   const censoredArrayNumber = req.session.censoredArrayNumber;
+  req.session.trialStartTime = new Date().toISOString();
   
   const packetArray = req.experiment.packetArray.map(x => x);
   req.experiment.setCurrentStage();
@@ -198,41 +292,41 @@ app.get('/game', (req, res) => {
 });
 
 //  handle adding data to Experiment
-app.post("/addTrial", (req, res) => {
-  
- 
+app.post("/addTrial", async (req, res) => {
+  // get request
   const inputs = req.body['input'];
-  console.log(inputs)
- 
+
+  // create and insert trial data
   const stage = req.session.stage;
+  req.session.trialEndTime = new Date().toISOString();
+  let trialNumber = 0;
+  let trialType = '';
   if (stage === 'test') {
     req.experiment.addTestTrial(inputs);
+    trialType = 'test';
   } else {
+    trialNumber = req.experiment.getTrialDataArrayLength() + 1;
+    trialType = 'main';
     req.experiment.addTrialInputToTrialData(inputs);
   }
   req.experiment.setCurrentStage();
+  const trialId = await insertTrial(req.session.username, trialType, trialNumber, req.session.trialStartTime, req.session.trialEndTime);
+  console.log(trialId);
+  
+  // insert packet data
+  
+  for (let input of inputs) {
+    if (!input.time) {
+      input["time"] = new Date().toISOString();
+    }
+    insertPacket(trialId, input.user, input.advisor, input.accepted, input.time);
+  }
+
+
   saveExperiment(req, res, () => {
     res.sendStatus(200);
   });
 })
-
-
-
-
-
-// POST Test Scenario: Save data to a file
-app.post("/testScenario", (req, res) => {
-  const dataToBeLogged = JSON.stringify(req.body);
-
-  // Create a write stream to append data to the log file
-  const logger = fs.createWriteStream('log.json', {
-    flags: 'a' // 'a' means append mode
-  });
-
-  logger.write(`${dataToBeLogged}\n`);
-  res.json({ msg: 'Data saved successfully' });
-});
-
 
 //  get scales views
 app.get("/scales", (req, res) => {
@@ -248,7 +342,7 @@ app.get("/scales", (req, res) => {
 })
 
 // handle scales posts
-app.post("/scales", (req, res) => {
+app.post("/scales", async (req, res) => {
   let data = req.body;
   
   let category = req.experiment.getCurrentStage();
@@ -256,6 +350,10 @@ app.post("/scales", (req, res) => {
   let typeOfScale = firstDataEle.slice(0,4);
   let inputs = Object.values(data);
   req.experiment.addScalesData(category, typeOfScale, inputs);
+  let scaleId = await insertScale(req.session.username, typeOfScale, category);
+  for (let i = 0; i < inputs.length; i++){
+    insertItem(i+1, scaleId, inputs[i]);
+  }
   
   if (req.session.scales.length === 0) { // check if scales complete
     req.experiment.setCurrentStage();
