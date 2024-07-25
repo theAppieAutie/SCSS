@@ -117,6 +117,17 @@ const insertItem = async (itemNumber, scale, value) => {
   }
 }
 
+const insertFeedback = async (participant, feedback) => {
+  const client = pool.connect();
+  try {
+    const query = 'UPDATE participants SET feedback = $2 WHERE participant_id = $1;';
+    const values = [participant, feedback];
+    const result = await client.query(query, values);
+  } finally {
+    (await client).release();
+  }
+}
+
 
 // Middleware and helpers
 app.use(express.urlencoded({ extended: true }));
@@ -163,8 +174,6 @@ const checkStageOfExperiment = (req, res, next) => {
   }
 }
 
-
-
 // Fisher-Yates array shuffle algortihm
 const shuffleArray = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -185,6 +194,8 @@ app.use(
 
 // pre route 
 app.use(restoreExperiment);
+
+
 // Routes
 
 // GET information view
@@ -410,6 +421,7 @@ app.post("/feedback", (req, res) => {
   let feedback = req.body;
   
   req.experiment.addFeedback(feedback);
+  insertFeedback(req.session.username, feedback);
   saveExperiment(req, res, () => {
     res.redirect("/debrief")
   });
