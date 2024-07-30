@@ -10,13 +10,16 @@ const Experiment = require("./public/scripts/experiment.js");
 const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
-// const { v4: uuidv4 } = require("uuid");
+const { v4: uuidv4 } = require("uuid");
 const flash = require("express-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const { Pool } = require('pg');
 const { config } = require("dotenv");
+const {Storage} = require('@google-cloud/storage');
+const crypto = require('crypto');
+
 
 
 
@@ -68,11 +71,11 @@ const getNextId = async () => {
   
 };
 
-const insertTrial = async (participant, type, number, start, end) => {
+const insertTrial = async (participant, type, number, start, end, url) => {
   const client = await pool.connect();
   try {
-    const query = 'INSERT INTO trials (participant_id, trial_type, trial_number, start_time, end_time) VALUES ($1, $2, $3, $4, $5) RETURNING trial_id;';
-    const values = [participant, type, number, start, end];
+    const query = 'INSERT INTO trials (participant_id, trial_type, trial_number, start_time, end_time, video_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING trial_id;';
+    const values = [participant, type, number, start, end, url];
     const result = await client.query(query, values);
     return result.rows[0].trial_id;
   } finally {
@@ -118,14 +121,61 @@ const insertItem = async (itemNumber, scale, value) => {
 }
 
 const insertFeedback = async (participant, feedback) => {
-  const client = pool.connect();
+  const client = await pool.connect();
   try {
     const query = 'UPDATE participants SET feedback = $2 WHERE participant_id = $1;';
     const values = [participant, feedback];
     const result = await client.query(query, values);
   } finally {
-    (await client).release();
+    client.release();
   }
+}
+
+// set up storage connection and functionality
+const storage = new Storage({
+  projectId: 'My First Project',
+  keyFilename: path.resolve(__dirname, 'key.json'),
+});
+
+async function uploadVideo(blob, req) {
+
+  const arrayBuffer = await blob.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  
+  const tempFilePath = path.join(__dirname, 'temp', 'facetracking.mp4');
+  
+  fs.mkdirSync(path.dirname(tempFilePath), {recursive:true});
+  fs.writeFileSync(tempFilePath, buffer);
+
+  const options = {
+    destination: `${req.session.username}-${req.session.trialNumber}`,
+    metadata: {
+      contentType: 'video/mp4',
+      contentDisposition: 'attachment',
+
+    },
+  };
+  try {
+    await storage.bucket(process.env.BUCKET_NAME).upload(tempFilePath, options);
+  } catch (err) {
+    console.error("error uploading file", err.stack);
+  } finally {
+    fs.unlinkSync(tempFilePath);
+  }
+
+}
+
+async function getUrl(req){
+  const options ={
+    version: 'v4',
+    action: 'read',
+    expires: Date.now() + 1000 * 60 * 60,
+  };
+  const [url] = await storage
+    .bucket(process.env.BUCKET_NAME)
+    .file(`${req.session.username}-${req.session.trialNumber}`)
+    .getSignedUrl(options);
+  return url;
 }
 
 
@@ -179,6 +229,20 @@ const shuffleArray = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+async function getVideo() {
+  try {
+    const response = await fetch('http://127.0.0.1:5000/download')
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const blob = await response.blob();
+    console.log(blob);
+    return blob;
+  } catch (err) {
+    console.error("error", err.stack);
   }
 }
 
@@ -249,6 +313,7 @@ app.post("/login", async (req, res) => {
   req.session.condition = condition;
   req.session.experiment = experiment;
   req.session.censoredArrayNumber = censoredArrayNumber;
+  req.session.trialNumber = 0;
 
   insertParticipant(participantId, condition, groupNumber, censoredInfo)
 
@@ -270,6 +335,7 @@ app.get('/game', (req, res) => {
   if (!req.session.condition) {
     return res.redirect('/');
   }
+  fetch('http://127.0.0.1:5000/start');
 
   // Retrieve experiment info
   
@@ -307,6 +373,8 @@ app.post("/addTrial", async (req, res) => {
   // get request
   const inputs = req.body['input'];
 
+  fetch('http://127.0.0.1:5000/stop');
+
   // create and insert trial data
   const stage = req.session.stage;
   req.session.trialEndTime = new Date().toISOString();
@@ -321,8 +389,23 @@ app.post("/addTrial", async (req, res) => {
     req.experiment.addTrialInputToTrialData(inputs);
   }
   req.experiment.setCurrentStage();
-  const trialId = await insertTrial(req.session.username, trialType, trialNumber, req.session.trialStartTime, req.session.trialEndTime);
-  console.log(trialId);
+
+  const blob = await getVideo();
+
+  let trialVideoUrl;
+
+  await uploadVideo(blob, req)
+    .then(()=> getUrl(req))
+    .then((url) => {
+      console.log(url);
+      trialVideoUrl = url;
+    })
+    .catch(console.error);
+  
+  // increment trial number
+  req.session.trialNumber ++;
+
+  const trialId = await insertTrial(req.session.username, trialType, trialNumber, req.session.trialStartTime, req.session.trialEndTime, trialVideoUrl.toString());
   
   // insert packet data
   
@@ -332,12 +415,10 @@ app.post("/addTrial", async (req, res) => {
     }
     insertPacket(trialId, input.user, input.advisor, input.accepted, input.time);
   }
-
-
   saveExperiment(req, res, () => {
     res.sendStatus(200);
   });
-})
+});
 
 //  get scales views
 app.get("/scales", (req, res) => {
